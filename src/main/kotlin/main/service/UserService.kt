@@ -6,10 +6,11 @@ import main.repo.UserRepo
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
-class UserService(val userRepo: UserRepo) : UserDetailsService {
+class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) : UserDetailsService {
 
     override fun loadUserByUsername(userName: String): UserDetails {
         return userRepo.findByUsername(userName) ?: throw UsernameNotFoundException("Пользователь $userName не найден")
@@ -54,7 +55,7 @@ class UserService(val userRepo: UserRepo) : UserDetailsService {
         user = User()
         user.username = username
         user.nickname = nickname
-        user.password = password
+        user.password = passwordEncoder.encode(password)
         user.roles.add(User.Roles.USER)
         return userRepo.save(user)
     }

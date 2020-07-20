@@ -24,6 +24,7 @@ class SecurityCfg(private val passwordEncoder: PasswordEncoder, private val user
                 .antMatchers("/", "/registration").permitAll()
                 .and()
                 .formLogin()
+                .loginPage("/api/login")
                 .and()
                 .logout().logoutSuccessUrl("/")
                 .and()
