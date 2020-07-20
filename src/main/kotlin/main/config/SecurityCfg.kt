@@ -21,10 +21,9 @@ class SecurityCfg(private val passwordEncoder: PasswordEncoder, private val user
     override fun configure(http: HttpSecurity) {
         http
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/registration").permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login")
                 .and()
                 .logout().logoutSuccessUrl("/")
                 .and()

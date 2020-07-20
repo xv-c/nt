@@ -12,36 +12,36 @@ import javax.persistence.*
 class User : UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Minimal::class)
-    private var id: Long = 0
-
-    @JsonView(Views.Minimal::class)
-    private var username: String? = null
+    var id: Long = 0
 
     @JsonView(UserComplete::class)
-    private var login: String? = null
+    var nickname: String = ""
+
+    @JsonView(Views.Minimal::class)
+    internal var username: String = ""
 
     @JsonView(UserComplete::class)
-    private var password: String? = null
+    internal var password: String = ""
 
     @ElementCollection(targetClass = Roles::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(value = EnumType.STRING)
     @JsonView(Views.Minimal::class)
-    private var roles: List<Roles>
+    var roles: MutableList<Roles> = mutableListOf()
 
-    constructor(){
-        roles = emptyList()
-    }
-    constructor(id: Long, username: String?, login: String?, password: String?, roles: List<Roles>) {
+    constructor()
+
+    constructor(id: Long, username: String, login: String, password: String, roles: MutableList<Roles>) {
         this.id = id
         this.username = username
-        this.login = login
+        this.nickname = login
         this.password = password
         this.roles = roles
     }
 
-    constructor(roles: List<Roles>) {
+    constructor(roles: MutableList<Roles>) {
         this.roles = roles
     }
 

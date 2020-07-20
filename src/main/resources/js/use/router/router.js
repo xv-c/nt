@@ -1,20 +1,14 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
+import Registration from "../../pages/Registration.vue";
+import MainPage from "../../pages/MainPage.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
-    /*{path: '/', component: MainAlbums},
-    {path: '/profile', component: HomeProfile},
-    {path: '/users/:id', component: Profile},
-    {path: '/items/:id', component: ItemPage},
-    {path: '/albums/:id', component: AlbumPage},
-    {path: '/registration', component: Registration},
-    {path: '/addnew', component: AddAlbumForm},
-    {path: '/report', component: ReportProblem},
-    {path: '/searchpage/:filter', component: SearchPage},
-    {path: '/adminpanel', component: AdminPanel},
-    {path: '*', redirect: '/', component: MainAlbums}*/
+    {path:'/registration', component: Registration},
+    {path: '/', component: MainPage},
+    {path: '*', redirect: '/'}
 ];
 
 export default new VueRouter({

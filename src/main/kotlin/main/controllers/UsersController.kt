@@ -1,21 +1,35 @@
 package main.controllers
 
+import com.fasterxml.jackson.annotation.JsonView
+import main.exceptions.ServiceException
 import main.model.User
-import main.repo.UserRepo
+import main.service.UserService
+import main.util.ResponseFactory
+import main.util.Views
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/users")
-class UsersController(var userRepo: UserRepo) {
-
-    @GetMapping
-    fun getUsers(): MutableList<User> {
-        return userRepo.findAll()
-    }
+@RequestMapping("/api/users")
+class UsersController(var userService: UserService) {
 
     @PostMapping
-    fun hello(@RequestParam username: String, @RequestParam login: String, @RequestParam password: String): User {
-        val user = User(null)
+    @JsonView(Views.Minimal::class)
+    fun registerUser(@RequestParam username: String, @RequestParam nickname: String, @RequestParam password: String): ResponseEntity<*> {
 
+        val user: User
+        try {
+            user = userService.saveUser(username, nickname, password)
+        } catch (e: ServiceException) {
+            return ResponseFactory.buildUnsuccessfulResponse(e.message)
+        }
+        return ResponseFactory.buildResponse("user", user, true, HttpStatus.OK)
+    }
+
+    @GetMapping
+    @JsonView(Views.Minimal::class)
+    fun get():ResponseEntity<*>{
+        return ResponseFactory.buildResponse("users", userService.get(), true, HttpStatus.OK )
     }
 }

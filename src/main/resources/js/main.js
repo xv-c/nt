@@ -2,9 +2,10 @@ import Vue from 'vue'
 import Vuetify from 'vuetify'
 import '@babel/polyfill'
 
-import Main from "./pages/Main.vue";
+import Main from "./pages/Main.vue"
 import store from "./use/store/store.js"
 import router from 'use/router/router'
+import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify);
 
