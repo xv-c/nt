@@ -1,6 +1,6 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
-import Registration from "../../pages/Registration.vue";
+import Registration from "../../components/forms/Registration.vue";
 import MainPage from "../../pages/MainPage.vue";
 
 Vue.use(VueRouter);

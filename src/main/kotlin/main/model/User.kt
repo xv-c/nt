@@ -16,10 +16,10 @@ class User : UserDetails {
     @JsonView(Views.Minimal::class)
     var id: Long = 0
 
-    @JsonView(UserComplete::class)
+    @JsonView(Views.Minimal::class)
     var nickname: String = ""
 
-    @JsonView(Views.Minimal::class)
+    @JsonView(UserComplete::class)
     internal var username: String = ""
 
     @JsonView(UserComplete::class)

@@ -3,12 +3,16 @@
         <v-app-bar color="#5AACC7" flat app>
             <v-btn href="/" text>Главная</v-btn>
             <v-spacer/>
-            <v-btn href="/login" text>Вход</v-btn>
-            <v-btn to="/registration" text>Регистрация</v-btn>
+            <v-btn v-if="!profile" @click="openAuthForm" color="#D2691E" rounded>Авторизация</v-btn>
+            <v-btn v-if="profile" href="/logout" color="#D2691E" rounded>Выход</v-btn>
         </v-app-bar>
+
+        <auth-form/>
+
         <v-main>
             <router-view/>
         </v-main>
+
         <v-footer>
             <canvas height="20" width="4000" id="canvas"></canvas>
         </v-footer>
@@ -16,8 +20,16 @@
 </template>
 
 <script>
+    import {mapActions, mapState} from "vuex";
+    import AuthForm from "./components/forms/AuthForm.vue";
+
     export default {
+        components: {AuthForm},
+        computed: {
+            ...mapState('app', ["profile"])
+        },
         methods: {
+            ...mapActions('app', ['openAuthForm']),
             draw() {
                 const canvas = document.getElementById('canvas');
                 let width = canvas.width;
@@ -36,7 +48,7 @@
                 random = Math.random();
                 let offsetY = (height - y) * random / 2;
 
-                ctx.strokeStyle = 'rgb(0,' + Math.floor(x/width*255) + ',' + Math.floor(y/height*255) + ')';
+                ctx.strokeStyle = 'rgb(0,' + Math.floor(x / width * 255) + ',' + Math.floor(y / height * 255) + ')';
 
                 ctx.strokeRect(x, y, offsetX, offsetY);
             }
@@ -48,7 +60,7 @@
 </script>
 
 <style scoped>
-    canvas{
+    canvas {
         width: 100%;
         height: 20px;
     }
