@@ -4,7 +4,7 @@
         <template v-slot:action="{ attrs }">
             <v-btn icon
                    v-bind="attrs"
-                   @click="hideSnackbar">
+                   @click="snackModel = false">
                 <v-icon>close</v-icon>
             </v-btn>
         </template>
@@ -12,23 +12,19 @@
 </template>
 
 <script>
+    import {mapState} from "vuex";
+
     export default {
-        props: ['snackbarMessage', 'snackTime'],
-        created() {
-            this.snackModel = this.model;
-        },
         data() {
             return {
                 snackModel: false,
             }
         },
-        methods: {
-            hideSnackbar() {
-                this.snackModel = false
-            }
+        computed:{
+            ...mapState("app", ["snackbarMessage", "snackbarTime"])
         },
         watch: {
-            snackTime: function (value) {
+            snackbarTime: function (value) {
                 this.snackModel = true;
             },
         },

@@ -1,6 +1,5 @@
 <template>
     <div>
-        <snackbar :snack-time="snackbarTime" :snackbar-message="snackbarMessage"/>
         <v-card-text>
             <v-col>
                 <v-text-field placeholder="Имя пользователя" clearable dense solo single-line counter="20"
@@ -37,8 +36,10 @@
             <v-spacer/>
             <v-col>
                 <v-btn @click="register" outlined color="blue"
-                       :disabled="confirmPassword.length!==0 && match!=='' ||
-                       password.length<8 || password.length>64 || username.length===0 || nickname.length<5 || nickname.length>20">Зарегистрироваться</v-btn>
+                       :disabled="confirmPassword.length===0 || match!=='' ||
+                       password.length<8 || password.length>64 || username.length===0 || nickname.length<5 || nickname.length>20">
+                    Зарегистрироваться
+                </v-btn>
             </v-col>
             <v-spacer/>
         </v-card-actions>
@@ -48,6 +49,7 @@
 <script>
     import axios from 'axios'
     import Snackbar from "../util/Snackbar.vue";
+    import {mapActions} from "vuex";
 
     export default {
         components: {
@@ -61,8 +63,6 @@
                 confirmPassword: '',
                 show: false,
                 showConf: false,
-                snackbarMessage: '',
-                snackbarTime: 0
             }
         },
         computed: {
@@ -71,12 +71,12 @@
             }
         },
         methods: {
+            ...mapActions('app', ["showMessage"]),
             register() {
                 const vue = this
 
                 if (this.confirmPassword !== this.password) {
-                    vue.snackbarMessage = "Пароли не совпадают"
-                    vue.snackbarTime++
+                    vue.showMessage('Пароли не совпадают')
                 }
 
                 let formData = new FormData();
@@ -86,13 +86,11 @@
                 axios.post("/api/users", formData)
                     .then(
                         function (response) {
-                            vue.snackbarMessage = "Пользователь успешно зарегистрирован"
-                            vue.snackbarTime++
+                            vue.showMessage("Пользователь успешно зарегистрирован")
                         })
                     .catch(
                         function (error) {
-                            vue.snackbarMessage = error.response.data.message
-                            vue.snackbarTime++
+                            vue.showMessage(error.response.data.message)
                         })
             }
         }

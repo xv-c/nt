@@ -1,6 +1,5 @@
 <template>
     <div>
-        <snackbar :snack-time="snackbarTime" :snackbar-message="snackbarMessage"/>
         <v-card-text>
             <v-col>
                 <v-text-field placeholder="Электронная почта" clearable dense solo single-line
@@ -26,6 +25,7 @@
 <script>
     import axios from "axios";
     import Snackbar from "../util/Snackbar.vue";
+    import {mapActions} from "vuex";
     export default {
         components:{
             Snackbar
@@ -35,17 +35,17 @@
                 username: '',
                 password: '',
                 show: false,
-                snackbarMessage: '',
-                snackbarTime: 0
             }
         },
         methods: {
+            ...mapActions('app', ["showMessage"]),
             login() {
                 const vue = this
 
                 let formData = new FormData();
                 formData.append("username", this.username)
                 formData.append("password", this.password)
+
                 axios.post("/api/login", formData)
                     .then(
                         function (response) {
@@ -54,8 +54,10 @@
                         })
                     .catch(
                         function (error) {
-                            vue.snackbarMessage = error.response.data.message
-                            vue.snackbarTime++
+                            if(error.response.data.message)
+                                vue.showMessage(error.response.data.message)
+                            else
+                                vue.showMessage("Некорректная почта и/или пароль")
                         })
             }
         }

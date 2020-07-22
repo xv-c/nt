@@ -3,10 +3,12 @@
         <v-app-bar color="#5AACC7" flat app>
             <v-btn href="/" text>Главная</v-btn>
             <v-spacer/>
+            <span v-if="profile"><b>{{profile.nickname}}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             <v-btn v-if="!profile" @click="openAuthForm" color="#D2691E" rounded>Авторизация</v-btn>
             <v-btn v-if="profile" href="/logout" color="#D2691E" rounded>Выход</v-btn>
         </v-app-bar>
 
+        <snackbar/>
         <auth-form/>
 
         <v-main>
@@ -22,9 +24,10 @@
 <script>
     import {mapActions, mapState} from "vuex";
     import AuthForm from "./components/forms/AuthForm.vue";
+    import Snackbar from "./components/util/Snackbar.vue";
 
     export default {
-        components: {AuthForm},
+        components: {Snackbar, AuthForm},
         computed: {
             ...mapState('app', ["profile"])
         },

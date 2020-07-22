@@ -20,7 +20,9 @@
                 <v-spacer/>
             </v-card-title>
 
-            <v-divider/>
+            <v-row style="margin-left: 10px; margin-right: 10px">
+                <v-col><v-divider/></v-col>
+            </v-row>
 
             <login v-if="isLogin"></login>
             <registration v-if="!isLogin"/>
