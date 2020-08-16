@@ -39,11 +39,8 @@
                 let height = canvas.height
                 let ctx = canvas.getContext('2d')
 
-                let random = Math.random()
-                let x = random * width
-
-                random = Math.random()
-                let y = random * height
+                let x = Math.random() * width
+                let y = Math.random() * height
 
                 let offsetX = 10;
                 let offsetY = 20;
@@ -60,7 +57,7 @@
 
             let ctx = canvas.getContext('2d')
             ctx.fillRect(0, 0, width, height);
-            setInterval(this.draw, 250)
+            setInterval(this.draw, 1)
         }
     }
 </script>
