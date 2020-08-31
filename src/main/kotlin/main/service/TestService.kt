@@ -51,4 +51,8 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
     fun getUserTests(user: User): MutableList<Test> {
         return testRepo.findByCreator(userRepo.findByIdOrNull(user.id)!!)
     }
+
+    fun getTest(user: User, key: String): Test {
+
+    }
 }

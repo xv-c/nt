@@ -19,15 +19,15 @@ class TestController(var testService: TestService) {
 
     @GetMapping
     @JsonView(Views.Minimal::class)
-    fun getList(@AuthenticationPrincipal user:User) : ResponseEntity<*>{
+    fun getList(@AuthenticationPrincipal user: User): ResponseEntity<*> {
         val list = testService.getUserTests(user)
         return ResponseFactory.buildResponse("tests", list, true, HttpStatus.OK)
     }
 
-    @GetMapping("{id}")
+    @GetMapping("{key}")
     @JsonView(Views.Minimal::class)
-    fun getOne(@AuthenticationPrincipal user:User) : ResponseEntity<*>{
-        val list = testService.getUserTests(user)
+    fun getOne(@AuthenticationPrincipal user: User, @PathVariable key: String): ResponseEntity<*> {
+        val list = testService.getTest(user, key)
         return ResponseFactory.buildResponse("tests", list, true, HttpStatus.OK)
     }
 
@@ -51,7 +51,7 @@ class TestController(var testService: TestService) {
             val question = TestQuestion()
 
             question.question = questionMap["question"] as String
-            if (question.question.isEmpty()  || question.question.length > 200)
+            if (question.question.isEmpty() || question.question.length > 200)
                 return ResponseFactory.buildUnsuccessfulResponse("Вопрос не может быть пустым и не может превышать длину в 200 символов")
 
             try {
@@ -60,10 +60,10 @@ class TestController(var testService: TestService) {
                 return ResponseFactory.buildUnsuccessfulResponse("Недопустимый тип вопроса")
             }
 
-            if(question.type!=TestQuestion.QuestionType.TEXT){
+            if (question.type != TestQuestion.QuestionType.TEXT) {
                 val validVariants = ArrayList<TestAnswerVariant>()
 
-                if((questionMap["variants"] as ArrayList<*>).size==0)
+                if ((questionMap["variants"] as ArrayList<*>).size == 0)
                     return ResponseFactory.buildUnsuccessfulResponse("Вопрос данного типа обязан иметь хотя бы один вариант ответа")
 
                 (questionMap["variants"] as ArrayList<*>).forEach { jsonVariant ->
