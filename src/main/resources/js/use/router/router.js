@@ -6,7 +6,7 @@ import MainPage from "../../pages/MainPage.vue";
 Vue.use(VueRouter);
 
 const routes = [
-    {path:'/registration', component: Registration},
+    {path: '/registration', component: Registration},
     {path: '/', component: MainPage},
     {path: '*', redirect: '/'}
 ];
