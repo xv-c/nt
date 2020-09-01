@@ -1,12 +1,14 @@
 package main.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
+import main.model.Test
 import main.model.TestAnswerVariant
 import main.model.TestQuestion
 import main.model.User
 import main.service.TestService
 import main.util.ResponseFactory
 import main.util.Views
+import org.hibernate.service.spi.ServiceException
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,9 +28,15 @@ class TestController(var testService: TestService) {
 
     @GetMapping("{key}")
     @JsonView(Views.Minimal::class)
-    fun getOne(@AuthenticationPrincipal user: User, @PathVariable key: String): ResponseEntity<*> {
-        val list = testService.getTest(user, key)
-        return ResponseFactory.buildResponse("tests", list, true, HttpStatus.OK)
+    fun getOne(@AuthenticationPrincipal user: User?, @PathVariable key: String): ResponseEntity<*> {
+        val test: Test?
+        try{
+            test = testService.getTest(user, key)
+        }catch (e: ServiceException){
+            return ResponseFactory.buildUnsuccessfulResponse(e.message)
+        }
+
+        return ResponseFactory.buildResponse("test", test, true, HttpStatus.OK)
     }
 
     @PostMapping

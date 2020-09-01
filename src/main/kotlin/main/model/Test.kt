@@ -30,5 +30,5 @@ class Test {
 
     @OneToMany
     @JsonView(Views.Minimal::class)
-    var testQuestions: Collection<TestQuestion> = ArrayList()
+    var questions: Collection<TestQuestion> = ArrayList()
 }

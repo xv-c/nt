@@ -8,6 +8,7 @@ import main.repo.TestAnswerVariantRepo
 import main.repo.TestQuestionRepo
 import main.repo.TestRepo
 import main.repo.UserRepo
+import org.hibernate.service.spi.ServiceException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
@@ -36,7 +37,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         test.loginRequired = loginRequired
         test.description = description
         test.creator = user
-        test.testQuestions = questions
+        test.questions = questions
         while (true) {
             val key = UUID.randomUUID().toString().substring(0..17)
             if (testRepo.findByKey(key) == null) {
@@ -52,7 +53,12 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         return testRepo.findByCreator(userRepo.findByIdOrNull(user.id)!!)
     }
 
-    fun getTest(user: User, key: String): Test {
+    fun getTest(user: User?, key: String): Test {
+        val test = testRepo.findByKey(key) ?: throw ServiceException("Не удалось найти тест с таким ключом")
 
+        if(test.loginRequired && user==null)
+            throw ServiceException("Для данного теста необходимо авторизоваться")
+
+        return test
     }
 }
