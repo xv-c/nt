@@ -46,7 +46,7 @@
                       outlined placeholder="Впишите ответ сюда"
                       counter="200"
                       v-model="answerForm[questionIndex].value"
-                      style="margin-left: 4%; margin-right: 4%; margin-top: 25px"/>
+                      style="margin-left: 4%; margin-right: 4%; margin-top: 20px"/>
 
         </template>
       </v-card-text>
