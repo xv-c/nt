@@ -22,7 +22,8 @@
           <v-row v-if="question.type==='MULTI'"
                  v-for="(variant, variantIndex) in question.variants" :key="undefined"
                  style="margin-left: 4%; margin-right: 4%">
-            <v-checkbox v-model="answerForm[questionIndex].variants[variantIndex].value">
+            <v-checkbox v-model="answerForm[questionIndex].variants[variantIndex].value"
+                        :style="variantIndex===0?'':'margin-top: -15px;'">
               <template v-slot:label>
                 <span style="color:black;">{{ variant.text }}</span>
               </template>
@@ -30,7 +31,8 @@
           </v-row>
 
 
-          <v-row v-if="question.type==='ONE'">
+          <v-row v-if="question.type==='ONE'"
+                 style="margin-left: 4%; margin-right: 4%">
             <v-radio-group v-model="answerForm[questionIndex].radio">
               <v-radio
                   v-for="(variant, variantIndex) in question.variants"
@@ -41,9 +43,10 @@
           </v-row>
 
           <v-textarea v-if="question.type==='TEXT'"
-                      placeholder="Впишите ответ сюда"
+                      outlined placeholder="Впишите ответ сюда"
+                      counter="200"
                       v-model="answerForm[questionIndex].value"
-                      style="margin-left: 4%; margin-right: 4%"/>
+                      style="margin-left: 4%; margin-right: 4%; margin-top: 25px"/>
 
         </template>
       </v-card-text>
@@ -65,7 +68,7 @@ export default {
   },
   methods: {
     ...mapActions("app", ["showMessage"]),
-    submit(){
+    submit() {
 
     }
   },
