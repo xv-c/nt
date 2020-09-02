@@ -37,8 +37,11 @@
               <v-radio
                   v-for="(variant, variantIndex) in question.variants"
                   :value="variantIndex"
-                  :key="variantIndex"
-                  :label="variant.text"/>
+                  :key="variantIndex">
+                <template v-slot:label>
+                  <span style="color:black;">{{ variant.text }}</span>
+                </template>
+              </v-radio>
             </v-radio-group>
           </v-row>
 
