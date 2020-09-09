@@ -61,7 +61,6 @@ class TestController(var testService: TestService) {
             question.question = questionMap["question"] as String
             if (question.question.isEmpty() || question.question.length > 200)
                 return ResponseFactory.buildUnsuccessfulResponse("Вопрос не может быть пустым и не может превышать длину в 200 символов")
-
             try {
                 question.type = TestQuestion.QuestionType.valueOf(questionMap["type"] as String)
             } catch (e: Exception) {
