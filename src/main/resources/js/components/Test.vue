@@ -29,7 +29,7 @@
               </template>
             </v-checkbox>
           </v-row>
-          
+
           <v-row v-if="question.type==='ONE'"
                  style="margin-left: 4%; margin-right: 4%">
             <v-radio-group v-model="answerForm[questionIndex].radio">
