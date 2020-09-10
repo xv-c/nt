@@ -29,8 +29,7 @@
               </template>
             </v-checkbox>
           </v-row>
-
-
+          
           <v-row v-if="question.type==='ONE'"
                  style="margin-left: 4%; margin-right: 4%">
             <v-radio-group v-model="answerForm[questionIndex].radio">
@@ -50,7 +49,6 @@
                       counter="200"
                       v-model="answerForm[questionIndex].value"
                       style="margin-left: 4%; margin-right: 4%; margin-top: 20px"/>
-
         </template>
       </v-card-text>
     </v-card>
