@@ -2,7 +2,7 @@
   <v-container>
     <loading-mask :mask-model="maskModel"/>
     <v-row justify="center">
-      <span v-if="!profile" style="font-size: large; margin-top: 5%"><b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы просмотреть результаты тестов!</b></span>
+      <span v-if="!profile" style="font-size: large; margin-top: 5%"><b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы просмотреть результаты опросов!</b></span>
     </v-row>
     <template v-if="profile">
       <v-row justify="center">
@@ -10,7 +10,7 @@
       </v-row>
       <v-row justify="center">
         <span v-if="tests.length===0"
-              style="font-size: large; margin-top: 5%"><b>У вас еще нет созданных тестов</b></span>
+              style="font-size: large; margin-top: 5%"><b>У вас еще нет созданных опросов</b></span>
         <v-data-table
             v-if="tests.length>0"
             :headers="headers"
@@ -45,8 +45,8 @@ export default {
     return {
       maskModel: false,
       headers: [
-        {text: 'Название теста', value: 'name'},
-        {text: 'Ключ теста', value: 'key'},
+        {text: 'Название опроса', value: 'name'},
+        {text: 'Ключ опроса', value: 'key'},
         {text: 'Действия', value: 'actions', sortable: false, align: 'center'}
       ],
       tests: []
@@ -91,7 +91,7 @@ export default {
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
-      this.showMessage("Ключ теста cкопирован!")
+      this.showMessage("Ключ опроса cкопирован!")
     }
   },
   created() {

@@ -2,7 +2,7 @@
     <v-container>
         <v-row v-if="!profile" justify="center" style="margin-top: 5%">
       <span style="font-size: large">
-        <b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы начать работу с конструктором тестов!</b>
+        <b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы начать работу с конструктором опросов!</b>
       </span>
         </v-row>
 
@@ -175,7 +175,7 @@
                 axios.post("/api/tests", formData)
                     .then(
                         function (response) {
-                            vue.showMessage('Тест успешно добавлен! Ключ теста: ' + response.data.data.test.key)
+                            vue.showMessage('Тест успешно добавлен! Ключ опроса: ' + response.data.data.test.key)
                         })
                     .catch(
                         function (error) {

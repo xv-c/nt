@@ -15,5 +15,5 @@ class TestAnswerVariant {
     var id: Long = 0
 
     @JsonView(Views.Minimal::class)
-    var text: String = ""
+    var value: String = ""
 }

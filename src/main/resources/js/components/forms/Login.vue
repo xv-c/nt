@@ -24,12 +24,10 @@
 
 <script>
 import axios from "axios";
-import Snackbar from "../util/Snackbar.vue";
 import {mapActions} from "vuex";
 
 export default {
   components: {
-    Snackbar
   },
   data() {
     return {
@@ -49,12 +47,11 @@ export default {
 
       axios.post("/api/login", formData)
           .then(
-              function (response) {
-                vue.$router.push('/')
+              response => {
                 vue.$router.go()
               })
           .catch(
-              function (error) {
+              error => {
                 if (error.response.data.message)
                   vue.showMessage(error.response.data.message)
                 else

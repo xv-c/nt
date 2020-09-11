@@ -1,13 +1,13 @@
 <template>
   <v-tabs centered grow background-color="#91CAD8" color="black">
     <v-tab>
-      <v-icon>search</v-icon>&nbsp;Найти тест
+      <v-icon>search</v-icon>&nbsp;Найти опрос
     </v-tab>
     <v-tab>
       <v-icon>add</v-icon>&nbsp;Конструктор
     </v-tab>
     <v-tab>
-      <v-icon>far fa-chart-bar</v-icon>&nbsp;&nbsp;Результаты тестов
+      <v-icon>far fa-chart-bar</v-icon>&nbsp;&nbsp;Результаты опросов
     </v-tab>
 
     <v-tab-item :transition="false" :reverse-transition="false">

@@ -3,7 +3,7 @@
     <v-row justify="center" style="margin-top: 10%">
       <v-col cols="5">
         <v-text-field v-model="searchValue"
-                      placeholder="Найти тест по ключу..."
+                      placeholder="Найти опрос по ключу..."
                       dense outlined
                       prepend-inner-icon="search"
                       append-outer-icon="mdi-send"
@@ -27,7 +27,7 @@ export default {
     ...mapActions("app", ["showMessage"]),
     doSearch(){
       if(this.searchValue===''){
-        this.showMessage('Нет теста с таким ключом')
+        this.showMessage('Нет опроса с таким ключом')
         return
       }
 

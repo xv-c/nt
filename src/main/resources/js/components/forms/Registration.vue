@@ -48,12 +48,10 @@
 
 <script>
 import axios from 'axios'
-import Snackbar from "../util/Snackbar.vue";
-import {mapActions} from "vuex";
+import {mapActions} from "vuex"
 
 export default {
   components: {
-    Snackbar
   },
   data() {
     return {

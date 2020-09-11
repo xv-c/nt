@@ -21,5 +21,5 @@ class TestResult {
 
     @OneToMany
     @JsonView(Views.Minimal::class)
-    var answers: Map<TestQuestion, TestAnswerVariant> = HashMap()
+    var answers: MutableMap<TestQuestion, TestAnswerVariant> = HashMap()
 }

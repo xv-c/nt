@@ -5,7 +5,7 @@
       <v-spacer/>
       <span v-if="profile"><b>{{ profile.nickname }}</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <v-btn v-if="!profile" @click="openAuthForm" color="#CE7A46" rounded>Авторизация</v-btn>
-      <v-btn v-if="profile" href="/logout" color="#CE7A46" rounded>Выход</v-btn>
+      <v-btn v-if="profile" @click="logout()" color="#CE7A46" rounded>Выход</v-btn>
     </v-app-bar>
 
     <snackbar/>
@@ -23,6 +23,7 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
+import axios from 'axios'
 import AuthForm from "./components/forms/AuthForm.vue";
 import Snackbar from "./components/util/Snackbar.vue";
 
@@ -48,6 +49,12 @@ export default {
       ctx.fillStyle = 'rgb(0,' + Math.floor(x / width * 255) + ',' + Math.floor(y / height * 255) + ')'
 
       ctx.fillRect(x, y, offsetX, offsetY)
+    },
+    logout() {
+      let vue = this
+      axios.post("/logout").finally(() => {
+        vue.$router.go()
+      })
     }
   },
   mounted() {

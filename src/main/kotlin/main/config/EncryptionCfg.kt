@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 
 @Configuration
-class EncryptionConfig {
+class EncryptionCfg {
     val passwordEncoder: PasswordEncoder
     @Bean
         get() = BCryptPasswordEncoder(8)
