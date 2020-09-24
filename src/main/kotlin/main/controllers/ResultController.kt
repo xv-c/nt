@@ -1,6 +1,6 @@
 package main.controllers
 
-import main.model.Test
+import main.model.test.test.Test
 import main.model.User
 import main.service.ResultService
 import main.service.TestService
@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*
 class ResultController(val testService: TestService, val resultService: ResultService) {
 
     @PostMapping("{key}")
-    fun postResult(@PathVariable key: String, @RequestParam resultJson: String, @AuthenticationPrincipal user: User): ResponseEntity<*> {
+    fun postResult(@PathVariable key: String,
+                   @RequestParam("result") resultJson: String,
+                   @AuthenticationPrincipal user: User?): ResponseEntity<*> {
         val test: Test
         try {
             test = testService.getTest(user, key)

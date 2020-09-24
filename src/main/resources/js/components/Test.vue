@@ -29,7 +29,7 @@
             <v-checkbox v-model="answerForm[questionIndex].variants[variantIndex].value"
                         :style="variantIndex===0?'':'margin-top: -15px;'">
               <template v-slot:label>
-                <span style="color:black;">{{ variant.text }}</span>
+                <span style="color:black;">{{ variant.value }}</span>
               </template>
             </v-checkbox>
           </v-row>
@@ -42,7 +42,7 @@
                   :value="variantIndex"
                   :key="variantIndex">
                 <template v-slot:label>
-                  <span style="color:black;">{{ variant.text }}</span>
+                  <span style="color:black;">{{ variant.value }}</span>
                 </template>
               </v-radio>
             </v-radio-group>
@@ -85,7 +85,7 @@ export default {
 
         if (this.test.questions[i].type === 'MULTI') {
           data.push({value: []})
-          for (let j = 0; j < answer.variants.length; j++){
+          for (let j = 0; j < answer.variants.length; j++) {
             if (answer.variants[j].value)
               data[data.length - 1].value.push(j)
           }
@@ -93,14 +93,32 @@ export default {
         }
         data.push({value: answer.value})
       }
-      console.log(data)
+      let body = new FormData()
+      body.append("result", JSON.stringify(data))
+
+      let vue = this
+      axios.post('/api/results/' + this.$route.params.key, body)
+          .then(
+              response => {
+
+              }
+          )
+          .catch(
+              error => {
+                if (!error.response || !error.response.data || !error.response.data.message) {
+                  vue.showMessage("Не удалось выполнить запрос")
+                  return
+                }
+                if (error.response.data.message)
+                  vue.showMessage(error.response.data.message)
+              })
     }
   },
   created() {
     let vue = this
     axios.get('/api/tests/' + this.$route.params.key)
         .then(
-            function (response) {
+            response => {
               let test = response.data.data.test
               vue.test = test
 
@@ -120,7 +138,7 @@ export default {
               }
             })
         .catch(
-            function (error) {
+            error => {
               if (!error.response || !error.response.data || !error.response.data.message) {
                 vue.showMessage("Не удалось выполнить запрос")
                 return

@@ -36,7 +36,7 @@ class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) 
             errors += "Пароль не может быть пустым\r\n"
         if (password.length < 8)
             errors += "Пароль должен содержать не менее, чем 8 символов\r\n"
-        if (password.length > 20)
+        if (password.length > 64)
             errors += "Пароль должен содержать не более, чем 64 символа\r\n"
 
         return errors
@@ -47,13 +47,13 @@ class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) 
         if (errors.isNotEmpty())
             throw ServiceException(errors)
 
-        var user = userRepo.findByUsername(username)
+        var user = userRepo.findByUsername(username.toLowerCase())
 
         if (user != null)
             throw ServiceException("Пользователь с такой почтой уже зарегистрирован")
 
         user = User()
-        user.username = username
+        user.username = username.toLowerCase()
         user.nickname = nickname
         user.password = passwordEncoder.encode(password)
         user.roles.add(User.Roles.USER)

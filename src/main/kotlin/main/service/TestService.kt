@@ -1,8 +1,8 @@
 package main.service
 
-import main.model.Test
-import main.model.TestAnswerVariant
-import main.model.TestQuestion
+import main.model.test.test.Test
+import main.model.test.test.TestAnswerVariant
+import main.model.test.test.TestQuestion
 import main.model.User
 import main.repo.*
 import org.hibernate.service.spi.ServiceException
@@ -20,7 +20,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
     }
 
     fun getTest(user: User?, key: String): Test {
-        val test = testRepo.findByKey(key) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+        val test = testRepo.findByKey(key.toLowerCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
 
         if (test.loginRequired) {
             if (user == null)
@@ -54,7 +54,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         test.creator = user
         test.questions = questions
         while (true) {
-            val key = UUID.randomUUID().toString().substring(0..17)
+            val key = UUID.randomUUID().toString().substring(0..17).toLowerCase()
             if (testRepo.findByKey(key) == null) {
                 test.key = key
                 break
@@ -89,7 +89,8 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
                     val variant = TestAnswerVariant()
                     variant.value = variantMap["text"] as String
 
-                    if (variant.value.isEmpty() || variant.value.length > 50)
+                    if (variant.value.isEmpty() ||
+                            variant.value.length > 50)
                         throw ServiceException("Вариант ответа не может быть пустым и не может превышать длину в 50 символов")
                     validVariants.add(variant)
                 }

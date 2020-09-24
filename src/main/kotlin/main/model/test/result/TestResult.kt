@@ -1,6 +1,9 @@
-package main.model
+package main.model.test.result
 
 import com.fasterxml.jackson.annotation.JsonView
+import main.model.User
+import main.model.test.test.Test
+import main.model.test.test.TestQuestion
 import main.util.Views
 import javax.persistence.*
 
@@ -20,6 +23,7 @@ class TestResult {
     var respondent: User? = null
 
     @OneToMany
+    @MapKeyJoinColumn(name = "question_id")
     @JsonView(Views.Minimal::class)
-    var answers: MutableMap<TestQuestion, TestAnswerVariant> = HashMap()
+    var answers: MutableMap<TestQuestion, TestResultAnswer>? = null
 }

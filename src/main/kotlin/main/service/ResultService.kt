@@ -1,36 +1,66 @@
 package main.service
 
-import main.model.Test
-import main.model.TestAnswerVariant
-import main.model.TestResult
 import main.model.User
+import main.model.test.result.TestResult
+import main.model.test.result.TestResultAnswer
+import main.model.test.test.Test
+import main.model.test.test.TestQuestion
 import main.repo.TestAnswerVariantRepo
 import main.repo.TestRepo
+import main.repo.TestResultAnswerRepo
 import main.repo.TestResultRepo
 import org.hibernate.service.spi.ServiceException
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.stereotype.Service
 
 @Service
-class ResultService(val testRepo: TestRepo, val testResultRepo: TestResultRepo, val testAnswerVariantRepo: TestAnswerVariantRepo) {
+class ResultService(val testRepo: TestRepo,
+                    val testResultRepo: TestResultRepo,
+                    val testAnswerVariantRepo: TestAnswerVariantRepo,
+                    val testResultAnswerRepo: TestResultAnswerRepo) {
 
-    fun parseResult(resultJson: String, test: Test, user: User): TestResult {
+    fun parseResult(resultJson: String, test: Test, user: User?): TestResult {
         val testResult = TestResult()
         val answersList = JsonParserFactory.getJsonParser().parseList(resultJson)
 
         if (answersList.size != test.questions.size)
             throw ServiceException("Количество ответов не совпадает с количеством вопросов в опросе")
 
+        testResult.answers = HashMap()
         for (index in 0 until answersList.size) {
-            val variant = TestAnswerVariant()
-            variant.value = JsonParserFactory.getJsonParser().parseMap(answersList[index].toString())["value"].toString()
-            testResult.answers[test.questions.elementAt(index)] = testAnswerVariantRepo.save(variant)
+            when (test.questions[index].type) {
+                TestQuestion.QuestionType.MULTI -> {
+                    val answerParsed = (answersList[index] as Map<*, *>)["value"] as ArrayList<Int>
+                    val answer = TestResultAnswer()
+                    answer.question = test.questions[index]
+                    answer.answers = mutableListOf()
+                    for (answerVariant in answerParsed) {
+                        answer.answers!!.add(test.questions[index].variants!![answerVariant])
+                    }
+                    testResult.answers!![test.questions[index]] = testResultAnswerRepo.save(answer)
+                }
+                TestQuestion.QuestionType.ONE -> {
+                    val answerParsed = (answersList[index] as Map<*, *>)["value"] as Int
+                    val answer = TestResultAnswer()
+                    answer.question = test.questions[index]
+                    answer.answers = mutableListOf()
+                    answer.answers!!.add(test.questions[index].variants!![answerParsed])
+                    testResult.answers!![test.questions[index]] = testResultAnswerRepo.save(answer)
+                }
+                TestQuestion.QuestionType.TEXT -> {
+                    val answer = TestResultAnswer()
+                    answer.question = test.questions[index]
+                    answer.answer = (answersList[index] as Map<*, *>)["value"] as String
+                    testResult.answers!![test.questions[index]] = testResultAnswerRepo.save(answer)
+                }
+            }
         }
 
         if (test.loginRequired)
             testResult.respondent = user
 
-        testResult.test
+
+        testResult.test = test
         return testResult
     }
 

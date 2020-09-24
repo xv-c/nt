@@ -1,7 +1,7 @@
 package main.repo
 
-import main.model.Test
-import main.model.TestResult
+import main.model.test.test.Test
+import main.model.test.result.TestResult
 import main.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 

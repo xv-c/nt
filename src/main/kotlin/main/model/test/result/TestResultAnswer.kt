@@ -1,27 +1,27 @@
-package main.model
+package main.model.test.result
 
 import com.fasterxml.jackson.annotation.JsonView
+import main.model.test.test.TestAnswerVariant
+import main.model.test.test.TestQuestion
 import main.util.Views
 import javax.persistence.*
 
 @Entity
-class TestQuestion {
+class TestResultAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Minimal::class)
     var id: Long = 0
 
+    @ManyToOne
+    @JoinColumn(name = "question_id")
     @JsonView(Views.Minimal::class)
-    var question: String = ""
+    var question:TestQuestion? = null
 
     @JsonView(Views.Minimal::class)
-    var type: QuestionType = QuestionType.ONE
+    var answer: String? = null
 
     @OneToMany
     @JsonView(Views.Minimal::class)
-    var variants: Collection<TestAnswerVariant>? = null
-
-    enum class QuestionType{
-        ONE, MULTI, TEXT
-    }
+    var answers: MutableList<TestAnswerVariant>? = null
 }

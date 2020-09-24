@@ -1,4 +1,4 @@
-package main.model
+package main.model.test.test
 
 import com.fasterxml.jackson.annotation.JsonView
 import main.util.Views
