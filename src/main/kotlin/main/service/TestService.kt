@@ -19,8 +19,20 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         return testRepo.findByCreator(userRepo.findByIdOrNull(user.id)!!)
     }
 
+    fun getUserTest(user: User?, key: String):Test{
+        val test = testRepo.findByKey(key.toLowerCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+
+        if (test.creator!! == user)
+            return test
+        else
+            throw ServiceException("Недостаточно прав для просмотра результатов")
+    }
+
     fun getTest(user: User?, key: String): Test {
         val test = testRepo.findByKey(key.toLowerCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+
+        if (test.creator!! == user)
+            return test
 
         if (test.loginRequired) {
             if (user == null)

@@ -21,7 +21,7 @@
             <span @click="sendKeyToBuffer(item.key)">{{ item.key }}</span>
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-btn color="blue" outlined>ответы</v-btn>
+            <v-btn color="blue" :href="`/results/${item.key}`" outlined>ответы</v-btn>
             <v-btn color="blue" outlined>редактировать</v-btn>
             <v-btn color="blue" outlined>удалить</v-btn>
           </template>
@@ -67,7 +67,6 @@ export default {
                   for (let i = 0; i < tests.length; i++) {
                     newTests.push(tests[i])
                   }
-                  vue.maskModel = false
                 })
             .catch(
                 error => {
@@ -75,10 +74,10 @@ export default {
                     vue.showMessage(error.response.data.message)
                   else
                     vue.showMessage("Не удалось выполнить запрос")
-                  vue.maskModel = false
                 })
             .finally(() => {
               vue.tests = newTests
+              vue.maskModel = false
             })
       }, 1000)
     },

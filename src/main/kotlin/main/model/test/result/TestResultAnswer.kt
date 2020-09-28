@@ -14,14 +14,13 @@ class TestResultAnswer {
     var id: Long = 0
 
     @ManyToOne
-    @JoinColumn(name = "question_id")
     @JsonView(Views.Minimal::class)
-    var question:TestQuestion? = null
+    var question: TestQuestion? = null
 
     @JsonView(Views.Minimal::class)
     var answer: String? = null
 
-    @OneToMany
+    @ManyToMany
     @JsonView(Views.Minimal::class)
     var answers: MutableList<TestAnswerVariant>? = null
 }

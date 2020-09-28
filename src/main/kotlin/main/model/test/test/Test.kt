@@ -16,7 +16,7 @@ class Test {
     var key: String = ""
 
     @ManyToOne
-    @JsonView(Views.Minimal::class)
+    @JsonView(Views.UserViews.UserComplete::class)
     var creator: User? = null
 
     @JsonView(Views.Minimal::class)

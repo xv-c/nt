@@ -22,14 +22,14 @@ class UsersController(var userService: UserService) {
         try {
             user = userService.saveUser(username, nickname, password)
         } catch (e: ServiceException) {
-            return ResponseFactory.buildUnsuccessfulResponse(e.message)
+            return ResponseFactory.fail(e.message)
         }
-        return ResponseFactory.buildResponse("user", user, true, HttpStatus.OK)
+        return ResponseFactory.build("user", user, true, HttpStatus.OK)
     }
 
     @GetMapping
     @JsonView(Views.Minimal::class)
     fun get():ResponseEntity<*>{
-        return ResponseFactory.buildResponse("users", userService.get(), true, HttpStatus.OK )
+        return ResponseFactory.build("users", userService.get(), true, HttpStatus.OK )
     }
 }

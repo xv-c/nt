@@ -25,19 +25,19 @@
     <text v-if="isRing" font-size="70px" text-anchor="middle" font-weight="bold"
           style="fill: black"
           :y="chartRadius+19"
-          :x="chartRadius+4">{{ getDataSum(chartData) }}
+          :x="chartRadius+4">{{ totalResults }}
     </text>
     <text v-if="isRing" font-size="18px" text-anchor="middle" font-weight="bold"
           style="fill: black"
           :y="chartRadius+44"
-          :x="chartRadius+4">{{ getLocalizedText(getDataSum(chartData)) }}
+          :x="chartRadius+4">{{ getLocalizedText(totalResults) }}
     </text>
   </svg>
 </template>
 
 <script>
 export default {
-  props: ['chartData', 'isRing'],
+  props: ['chartData', 'isRing', 'totalResults'],
   data() {
     return {
       chartRadius: 250,

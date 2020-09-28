@@ -1,11 +1,11 @@
 <template>
-  <v-container>
+  <div>
     <v-dialog v-if="selectedItem" v-model="showDialog" width="300">
       <v-color-picker v-model="selectedItem.color">
 
       </v-color-picker>
     </v-dialog>
-    <v-card :width="850">
+    <v-card width="850" tile>
       <v-card-title>
         <v-col style="margin-top: -10px" cols="4">
           <v-combobox single-line dense solo v-model="selectedChart"
@@ -31,8 +31,8 @@
       <v-card-text style="margin-top: -10px" id="chart">
         <v-row>
           <svg :width="325"
-               :height="chartData.length*30+10">
-            <g v-for="(item, index) in chartData">
+               :height="animatedChartData.length*30+10">
+            <g v-for="(item, index) in animatedChartData">
               <text @mouseover="focusItem(item)"
                     @mouseleave="resetColors()"
                     font-weight="bold"
@@ -41,7 +41,7 @@
                     style="fill: black">
                 {{ item.text }} ({{ item.value }} {{ getLocalizedText(item.value) }})
               </text>
-              <rect @click="showPicker(item)"
+              <rect @click="showPicker(defaultColors[index])"
                     @mouseover="focusItem(item)"
                     @mouseleave="resetColors()"
                     :height="25" :width="25"
@@ -56,15 +56,17 @@
 
           <bar-chart v-if="selectedChart==='Столбчатая диаграмма'"
                      @mouseleavechild="handleMouseLeaveChild" @mouseoverchild="handleMouseOverChild"
-                     :chart-data="animatedChartData"/>
+                     :chart-data="animatedChartData"
+                     :total-results="totalResults"/>
           <pie-chart v-if="selectedChart==='Кольцевая диаграмма' || selectedChart==='Круговая диаграмма'"
                      @mouseleavechild="handleMouseLeaveChild" @mouseoverchild="handleMouseOverChild"
                      :chart-data="animatedChartData"
-                     :is-ring="selectedChart==='Кольцевая диаграмма'"/>
+                     :is-ring="selectedChart==='Кольцевая диаграмма'"
+                     :total-results="totalResults"/>
         </v-row>
       </v-card-text>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -75,11 +77,12 @@ import PieChart from "./PieChart.vue"
 
 export default {
   components: {PieChart, BarChart},
-  props: ['chartData'],
+  props: ['chartData', 'totalResults'],
   data() {
     return {
       selectedItem: undefined,
       showDialog: false,
+      defaultColors: [],
       animatedChartData: [],
       selectedChart: 'Кольцевая диаграмма'
     }
@@ -94,16 +97,38 @@ export default {
     for (let i = 0; i < this.chartData.length; i++) {
       let vue = this;
       this.animatedChartData.push({
-        value: vue.chartData[i].value,
-        color: vue.chartData[i].color,
+        value: vue.chartData[i].results,
+        text: vue.chartData[i].value,
+        color: undefined,
         scale: 1
       })
     }
+    this.fillColors()
+
   },
   methods: {
+    fillColors() {
+      this.animatedChartData.sort((a, b) => a.value > b.value ? -1 : 1)
+      let sum = 0
+      for (let i = 0; i < this.animatedChartData.length; i++)
+        sum += this.animatedChartData[i].value
+      let accumSum = 0
+      for (let i = 0; i < this.animatedChartData.length; i++) {
+        let colorPercent = (accumSum + (this.animatedChartData[i].value / 2)) / sum
+        let color = Math.floor(colorPercent * 255)
+        let colorObject = {
+          r: 0,
+          g: color * 0.80,
+          b: color
+        }
+        this.animatedChartData[i].color = colorObject
+        this.defaultColors.push({color: colorObject})
+        accumSum += this.animatedChartData[i].value
+      }
+    },
     recolor() {
-      for (let i = 0; i < this.chartData.length; i++) {
-        this.chartData[i].color = {
+      for (let i = 0; i < this.defaultColors.length; i++) {
+        this.defaultColors[i].color = {
           r: Math.floor(Math.random() * 255),
           g: Math.floor(Math.random() * 255),
           b: Math.floor(Math.random() * 255),
@@ -130,9 +155,9 @@ export default {
       return 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
     },
     resetColors() {
-      for (let i = 0; i < this.chartData.length; i++) {
+      for (let i = 0; i < this.defaultColors.length; i++) {
         this.animatedChartData[i].scale = 1
-        this.animatedChartData[i].color = this.chartData[i].color
+        this.animatedChartData[i].color = this.defaultColors[i].color
       }
     },
     showPicker(item) {
@@ -164,13 +189,13 @@ export default {
       let lastNum = stringSum.charAt(stringSum.length - 1)
 
       if (stringSum.length > 1 && stringSum.charAt(stringSum.length - 2) === '1')
-        return 'ответов'
+        return 'респондентов'
       if (lastNum === '1')
-        return 'ответ'
+        return 'респондент'
       if (['2', '3', '4'].includes(lastNum))
-        return 'ответа'
+        return 'респондента'
       if (['0', '5', '6', '7', '8', '9'].includes(lastNum))
-        return 'ответов'
+        return 'респондентов'
     }
   },
 }

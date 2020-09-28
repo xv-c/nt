@@ -11,8 +11,8 @@
       <text font-weight="bold"
             style="fill: black"
             :y="35*i+22"
-            :x="barWidth(item, chartData) + 10">{{ chartData[i].value }}
-        ({{ getTextPercent(chartData[i].value, chartData) }})
+            :x="barWidth(item, chartData) + 10">
+        {{ chartData[i].value }}/{{ totalResults }} ({{ getTextPercent(chartData[i].value, chartData) }})
       </text>
     </g>
   </svg>
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  props: ['chartData'],
+  props: ['chartData', 'totalResults'],
   data() {
     return {
       chartWidth: 500,
@@ -46,7 +46,7 @@ export default {
       }
       if (maxVal === 0)
         return 0;
-      return (this.chartWidth - 90) / maxVal * item.value;
+      return (this.chartWidth - 100) / maxVal * item.value;
     },
   },
   computed: {}

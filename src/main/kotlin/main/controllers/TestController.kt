@@ -21,7 +21,7 @@ class TestController(var testService: TestService) {
     @JsonView(Views.Minimal::class)
     fun getList(@AuthenticationPrincipal user: User): ResponseEntity<*> {
         val list = testService.getUserTests(user)
-        return ResponseFactory.buildResponse("tests", list, true, HttpStatus.OK)
+        return ResponseFactory.ok("tests", list)
     }
 
     @GetMapping("{key}")
@@ -31,10 +31,10 @@ class TestController(var testService: TestService) {
         try {
             test = testService.getTest(user, key)
         } catch (e: ServiceException) {
-            return ResponseFactory.buildUnsuccessfulResponse(e.message)
+            return ResponseFactory.fail(e.message)
         }
 
-        return ResponseFactory.buildResponse("test", test, true, HttpStatus.OK)
+        return ResponseFactory.ok("test", test)
     }
 
     @PostMapping
@@ -47,16 +47,16 @@ class TestController(var testService: TestService) {
             @AuthenticationPrincipal user: User
     ): ResponseEntity<*> {
         if (name.isEmpty() || name.length > 50)
-            return ResponseFactory.buildUnsuccessfulResponse("Название формы не может быть пустым и не может превышать длину в 50 символов")
+            return ResponseFactory.fail("Название формы не может быть пустым и не может превышать длину в 50 символов")
         if (description.isEmpty() || description.length > 200)
-            return ResponseFactory.buildUnsuccessfulResponse("Описание формы не может быть пустым и не может превышать длину в 200 символов")
+            return ResponseFactory.fail("Описание формы не может быть пустым и не может превышать длину в 200 символов")
         val validQuestions: ArrayList<TestQuestion>
         try {
             validQuestions = testService.parseQuestions(testQuestionsJson)
         } catch (e: Exception) {
-            return ResponseFactory.buildUnsuccessfulResponse(e.message)
+            return ResponseFactory.fail(e.message)
         }
         val result = testService.save(name, description, loginRequired, validQuestions, user)
-        return ResponseFactory.buildResponse("test", result, true, HttpStatus.OK)
+        return ResponseFactory.ok("test", result)
     }
 }

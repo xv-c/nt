@@ -6,7 +6,7 @@
         <v-spacer/>
         <span v-if="test.loginRequired"
               style="color: red; font-size: 12px">
-          {{ 'Это не анонимный вопрос!' }}
+          Это не анонимный вопрос!
         </span>
       </v-card-title>
 
@@ -97,10 +97,10 @@ export default {
       body.append("result", JSON.stringify(data))
 
       let vue = this
-      axios.post('/api/results/' + this.$route.params.key, body)
+      axios.post(`/api/results/${this.$route.params.key}`, body)
           .then(
               response => {
-
+                vue.showMessage("Ваш ответ успешно записан")
               }
           )
           .catch(

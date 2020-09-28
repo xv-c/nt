@@ -5,23 +5,39 @@ import org.springframework.http.ResponseEntity
 import java.util.*
 
 object ResponseFactory {
-    fun buildUnsuccessfulResponse(message: String?): ResponseEntity<*> {
-        return buildResponse(message, false, HttpStatus.BAD_REQUEST)
+    fun fail(message: String?): ResponseEntity<*> {
+        return build(message, false, HttpStatus.BAD_REQUEST)
     }
 
-    fun buildResponse(message: String?, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
+    fun ok(): ResponseEntity<*> {
+        return build("", true, HttpStatus.OK)
+    }
+
+    fun ok(message: String?): ResponseEntity<*> {
+        return build(message, true, HttpStatus.OK)
+    }
+
+    fun ok(objectNames: Array<String>, objects: Array<Any>): ResponseEntity<*> {
+        return build(objectNames, objects, true, HttpStatus.OK)
+    }
+
+    fun ok(objectName: String?, `object`: Any?): ResponseEntity<*> {
+        return build(objectName, `object`, true, HttpStatus.OK)
+    }
+
+    fun build(message: String?, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
         return ResponseEntity<Any?>(getBody(success, message, null as String?, null), status!!)
     }
 
-    fun buildResponse(objectNames: Array<String>, objects: Array<Any>, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
+    fun build(objectNames: Array<String>, objects: Array<Any>, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
         return ResponseEntity<Any?>(getBody(success, "", objectNames, objects), status!!)
     }
 
-    fun buildResponse(objectName: String?, `object`: Any?, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
+    fun build(objectName: String?, `object`: Any?, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
         return ResponseEntity<Any?>(getBody(success, "", objectName, `object`), status!!)
     }
 
-    fun buildResponse(body: Map<String, Any>, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
+    fun build(body: Map<String, Any>, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
         return ResponseEntity<Any?>(getBody(success, "", body), status!!)
     }
 

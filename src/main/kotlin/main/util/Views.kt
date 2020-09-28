@@ -5,4 +5,7 @@ class Views {
     class UserViews {
         interface UserComplete : Minimal
     }
+    class ResultViews {
+        interface ResultComplete : Minimal
+    }
 }

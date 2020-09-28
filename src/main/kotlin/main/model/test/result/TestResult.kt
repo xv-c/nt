@@ -15,7 +15,7 @@ class TestResult {
     var id: Long = 0
 
     @ManyToOne
-    @JsonView(Views.Minimal::class)
+    @JsonView(Views.ResultViews.ResultComplete::class)
     var test: Test? = null
 
     @ManyToOne
@@ -23,7 +23,6 @@ class TestResult {
     var respondent: User? = null
 
     @OneToMany
-    @MapKeyJoinColumn(name = "question_id")
     @JsonView(Views.Minimal::class)
-    var answers: MutableMap<TestQuestion, TestResultAnswer>? = null
+    var answers: MutableList<TestResultAnswer>? = null
 }

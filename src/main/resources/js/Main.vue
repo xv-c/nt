@@ -24,7 +24,7 @@
 <script>
 import {mapActions, mapState} from "vuex";
 import axios from 'axios'
-import AuthForm from "./components/forms/AuthForm.vue";
+import AuthForm from "./components/auth/AuthForm.vue";
 import Snackbar from "./components/util/Snackbar.vue";
 
 export default {
