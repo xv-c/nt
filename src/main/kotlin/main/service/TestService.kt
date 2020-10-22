@@ -9,6 +9,7 @@ import org.hibernate.service.spi.ServiceException
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.sql.Date
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -65,6 +66,8 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         test.description = description
         test.creator = user
         test.questions = questions
+        test.creationDate = Date(Calendar.getInstance().timeInMillis)
+
         while (true) {
             val key = UUID.randomUUID().toString().substring(0..17).toLowerCase()
             if (testRepo.findByKey(key) == null) {

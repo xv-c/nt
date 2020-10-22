@@ -1,9 +1,9 @@
 import Vue from "vue"
 import VueRouter from "vue-router"
 import Registration from "../../components/auth/Registration.vue"
-import MainPage from "../../pages/MainPage.vue"
-import Test from "../../components/Test.vue"
-import ResultsPage from "../../components/results/ResultsPage.vue";
+import MainPage from "../../pages/Main.vue"
+import Test from "../../pages/Test.vue"
+import ResultsPage from "../../pages/Results.vue";
 
 Vue.use(VueRouter);
 

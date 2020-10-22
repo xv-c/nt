@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class MvcCfg : WebMvcConfigurer {
     @Bean
     fun webServerCustomizer(): WebServerFactoryCustomizer<ConfigurableServletWebServerFactory>? {
-        return WebServerFactoryCustomizer {
-            container: ConfigurableServletWebServerFactory -> container.addErrorPages(ErrorPage(HttpStatus.NOT_FOUND, "/"))
+        return WebServerFactoryCustomizer { container ->
+            container.addErrorPages(ErrorPage(HttpStatus.NOT_FOUND, "/"))
         }
     }
 }

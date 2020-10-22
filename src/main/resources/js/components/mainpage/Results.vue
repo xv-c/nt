@@ -45,6 +45,7 @@ export default {
     return {
       maskModel: false,
       headers: [
+        {text: 'Дата создания', value: 'creationDate'},
         {text: 'Название опроса', value: 'name'},
         {text: 'Ключ опроса', value: 'key'},
         {text: 'Действия', value: 'actions', sortable: false, align: 'center'}
@@ -65,6 +66,8 @@ export default {
                 response => {
                   let tests = response.data.data.tests
                   for (let i = 0; i < tests.length; i++) {
+                    tests[i].creationDate = new Date(Date.parse(tests[i].creationDate))
+                    tests[i].creationDate = `${tests[i].creationDate.getDay()}.${tests[i].creationDate.getMonth()}.${tests[i].creationDate.getFullYear()}`
                     newTests.push(tests[i])
                   }
                 })

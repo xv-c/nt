@@ -12,9 +12,9 @@
             stroke="grey" stroke-width="2"/>
 
     </g>
-    <circle v-if="chartData.length===1" :cx="chartRadius+4" :cy="chartRadius+4" :r="chartRadius"
+    <circle v-if="totalResults===1" :cx="chartRadius+4" :cy="chartRadius+4" :r="chartRadius"
             style="transform-origin: center"
-            :fill="getRgb(chartData[0].color)"
+            :fill="getRgb(getNotEmptyColor())"
     />
     <circle v-if="isRing" :cx="chartRadius+4" :cy="chartRadius+4" :r="chartRadius/2"
             stroke-width="2"
@@ -57,8 +57,14 @@ export default {
       })
       accumulatingPercent += percent
     }
+    console.log(this.animatedChartData)
   },
   methods: {
+    getNotEmptyColor() {
+      for (let i = 0; i < this.chartData.length; i++)
+        if (this.chartData[i].value !== 0)
+          return this.chartData[i].color
+    },
     getRgb(item) {
       return 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'
     },

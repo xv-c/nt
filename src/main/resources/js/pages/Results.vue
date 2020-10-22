@@ -8,7 +8,7 @@
           Результаты по опросу: {{ test.name }}<br/>
           Ответов: {{ results.length }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text v-if="results.length>0">
           <v-row v-for="(data, index) in chartsData" :key="undefined"
                  style="margin-top: 20px" justify="center">
 
@@ -40,8 +40,8 @@
 <script>
 import axios from 'axios'
 import {mapActions} from "vuex"
-import LoadingMask from "../util/LoadingMask.vue"
-import Chart from "./charts/Chart.vue"
+import LoadingMask from "../components/util/LoadingMask.vue"
+import Chart from "../components/results/charts/Chart.vue"
 
 export default {
   components: {

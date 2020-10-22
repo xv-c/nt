@@ -1,8 +1,10 @@
 package main.model.test.test
 
 import com.fasterxml.jackson.annotation.JsonView
+import jdk.jfr.Timestamp
 import main.model.User
 import main.util.Views
+import java.sql.Date
 import javax.persistence.*
 
 @Entity
@@ -18,6 +20,9 @@ class Test {
     @ManyToOne
     @JsonView(Views.UserViews.UserComplete::class)
     var creator: User? = null
+
+    @JsonView(Views.Minimal::class)
+    var creationDate: Date? = null
 
     @JsonView(Views.Minimal::class)
     var name: String = ""
