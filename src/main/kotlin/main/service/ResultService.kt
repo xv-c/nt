@@ -65,7 +65,6 @@ class ResultService(
         if (test.loginRequired)
             testResult.respondent = user
 
-
         testResult.test = test
         return testResult
     }

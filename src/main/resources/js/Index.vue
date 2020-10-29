@@ -52,9 +52,10 @@ export default {
     },
     logout() {
       let vue = this
-      axios.post("/logout").finally(() => {
-        vue.$router.go()
-      })
+      axios.post("/logout")
+          .finally(() => {
+            vue.$router.go()
+          })
     }
   },
   mounted() {

@@ -13,17 +13,21 @@
             <v-card-title>
               <v-text-field v-model="name" counter="50" :color="name.length===0? 'red' : 'blue'"
                             outlined dense
+                            hint="Поле не может быть пустым"
+                            :persistent-hint="name.length===0"
                             placeholder="Название"/>
             </v-card-title>
 
             <v-card-title style="margin-top: -35px">
               <v-textarea v-model="description" counter="200"
                           outlined dense
+                          hint="Поле не может быть пустым"
+                          :persistent-hint="description.length===0"
                           :color="description.length===0? 'red' : 'blue'"
                           placeholder="Краткое описание"/>
             </v-card-title>
 
-            <v-card-title style="margin-top: -60px; margin-bottom: -25px">
+            <v-card-title style="margin-top: -50px; margin-bottom: -25px">
               <v-checkbox v-model="loginRequired">
                 <template v-slot:label>
                   <span style="color:black;">Необходима авторизация</span>
@@ -46,17 +50,20 @@
             </v-card-title>
 
             <v-card-title style="margin-top: -30px">
-              <v-text-field v-model="question.question" placeholder="Вопрос" outlined dense counter="200"/>
+              <v-text-field v-model="question.question" placeholder="Вопрос"
+                            hint="Поле не может быть пустым"
+                            :persistent-hint="question.question.length===0"
+                            outlined dense counter="200"/>
             </v-card-title>
 
             <v-card-subtitle style="margin-bottom: -30px">
-              <v-combobox v-model="question.type" outlined dense
+              <v-select v-model="question.type" outlined dense
                           :items="['Один из списка', 'Несколько из списка', 'Текстовый ответ']"/>
             </v-card-subtitle>
 
             <v-card-text v-if="question.type!=='Текстовый ответ'">
-              <v-card outlined style="margin-top: 10px">
-                <v-card-text>
+              <v-card outlined style="margin-top: 15px; background-color: #9E9E9E">
+                <v-card-text style="background-color: white">
                   <v-row v-for="(variant, variantIndex) in question.variants" :key="undefined">
                     <v-text-field placeholder="Вариант ответа"
                                   v-model="variant.text"
@@ -65,7 +72,7 @@
                       <template v-slot:append-outer>
                         <v-hover v-slot:default="{ hover }">
                           <v-btn @click="removeVariant(questionIndex, variantIndex)"
-                                 :disabled="question.variants.length===1"
+                                 :disabled="question.variants.length===2"
                                  style="margin-top: -5px;" icon>
                             <v-icon :color="hover ? 'red' : undefined">clear</v-icon>
                           </v-btn>
@@ -185,7 +192,7 @@ export default {
       axios.post("/api/tests", formData)
           .then(
               function (response) {
-                vue.showMessage('Тест успешно добавлен! Ключ опроса: ' + response.data.data.test.key)
+                vue.showMessage(`Тест успешно добавлен! Ключ опроса: ${response.data.data.test.key}`)
               })
           .catch(
               function (error) {
@@ -201,6 +208,7 @@ export default {
         question: '',
         variants: []
       })
+      this.addVariant(this.questions[this.questions.length - 1])
       this.addVariant(this.questions[this.questions.length - 1])
     },
     addVariant(item) {

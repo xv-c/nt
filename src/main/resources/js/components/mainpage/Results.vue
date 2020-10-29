@@ -47,7 +47,7 @@ export default {
       headers: [
         {text: 'Дата создания', value: 'creationDate'},
         {text: 'Название опроса', value: 'name'},
-        {text: 'Ключ опроса', value: 'key'},
+        {text: 'Ключ опроса', value: 'key', align: 'center'},
         {text: 'Действия', value: 'actions', sortable: false, align: 'center'}
       ],
       tests: []
@@ -67,7 +67,13 @@ export default {
                   let tests = response.data.data.tests
                   for (let i = 0; i < tests.length; i++) {
                     tests[i].creationDate = new Date(Date.parse(tests[i].creationDate))
-                    tests[i].creationDate = `${tests[i].creationDate.getDay()}.${tests[i].creationDate.getMonth()}.${tests[i].creationDate.getFullYear()}`
+                    let validDay = tests[i].creationDate.getDay()
+                    if (validDay.toString().length === 1)
+                      validDay = `0${validDay}`
+                    let validMonth = tests[i].creationDate.getMonth()
+                    if (validMonth.toString().length === 1)
+                      validMonth = `0${validMonth}`
+                    tests[i].creationDate = `${validDay}.${validMonth}.${tests[i].creationDate.getFullYear()}`
                     newTests.push(tests[i])
                   }
                 })
