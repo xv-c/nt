@@ -1,1 +1,2 @@
-### WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP WIP 
+### !work in progress!
+tl;dr - Аналог google форм с анализом тональности текстовых ответов
