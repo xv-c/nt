@@ -5,7 +5,7 @@
 
 **frontend**: vue
 
-# milestones:
+### milestones:
 
 возможность составлять опросы (done)
 
