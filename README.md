@@ -3,8 +3,11 @@
 
 **backend**: kotlin, spring boot, postgres
 
+авторизация с помощью spring security, rest-контроллеры для взаимодействия с клиентом, spring data для взаимодействия с бадэ
+
 **frontend**: vue
 
+роутинг с помощью vue-router, axios для запросов к серверу, vuetify для готовых шаблонов 
 
 
 
