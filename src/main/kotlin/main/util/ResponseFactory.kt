@@ -37,8 +37,8 @@ object ResponseFactory {
         return ResponseEntity<Any?>(getBody(success, "", objectName, `object`), status!!)
     }
 
-    fun build(body: Map<String, Any>, success: Boolean, status: HttpStatus?): ResponseEntity<*> {
-        return ResponseEntity<Any?>(getBody(success, "", body), status!!)
+    fun build(body: Map<String, Any>, success: Boolean, status: HttpStatus): ResponseEntity<*> {
+        return ResponseEntity<Any?>(getBody(success, "", body), status)
     }
 
     private fun getBody(success: Boolean, message: String, data: Map<String, Any>): Map<*, *> {

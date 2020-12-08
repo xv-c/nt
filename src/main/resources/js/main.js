@@ -4,7 +4,7 @@ import '@babel/polyfill'
 
 import Main from "./Index.vue"
 import store from "./use/store/store.js"
-import router from 'use/router/router'
+import router from './use/router.js'
 import 'vuetify/dist/vuetify.min.css'
 
 

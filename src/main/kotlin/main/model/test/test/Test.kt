@@ -12,28 +12,28 @@ class Test {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonView(Views.Minimal::class)
-    var id: Long = 0
+    var id = 0L
 
     @JsonView(Views.Minimal::class)
-    var key: String = ""
+    lateinit var key : String
 
     @ManyToOne
     @JsonView(Views.UserViews.UserComplete::class)
-    var creator: User? = null
+    lateinit var creator: User
 
     @JsonView(Views.Minimal::class)
-    var creationDate: Date? = null
+    lateinit var creationDate: Date
 
     @JsonView(Views.Minimal::class)
-    var name: String = ""
+    lateinit var name : String
 
     @JsonView(Views.Minimal::class)
-    var description: String = ""
+    lateinit var description : String
 
     @JsonView(Views.Minimal::class)
-    var loginRequired: Boolean = false
+    var loginRequired = false
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(Views.Minimal::class)
-    var questions: List<TestQuestion> = ArrayList()
+    lateinit var questions: List<TestQuestion>
 }

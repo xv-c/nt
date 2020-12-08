@@ -4,42 +4,51 @@
     <v-row justify="center">
       <span v-if="!profile" style="font-size: large; margin-top: 5%"><b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы просмотреть результаты опросов!</b></span>
     </v-row>
-    <template v-if="profile">
-      <v-row justify="center">
-        <v-btn @click="loadData()" color="blue" outlined>Обновить</v-btn>
-      </v-row>
-      <v-row justify="center">
-        <span v-if="tests.length===0"
-              style="font-size: large; margin-top: 5%"><b>У вас еще нет созданных опросов</b></span>
-        <v-data-table
-            v-if="tests.length>0"
-            :headers="headers"
-            :items="tests"
-            hide-default-footer
-        >
-          <template v-slot:item.key="{ item }">
-            <span @click="sendKeyToBuffer(item.key)">{{ item.key }}</span>
-          </template>
-          <template v-slot:item.actions="{ item }">
-            <v-btn color="blue" :href="`/results/${item.key}`" outlined>ответы</v-btn>
-            <v-btn color="blue" outlined>редактировать</v-btn>
-            <v-btn color="blue" outlined>удалить</v-btn>
-          </template>
-        </v-data-table>
-      </v-row>
-    </template>
+    <v-row v-if="profile && !resultTestKey" justify="center">
+      <v-data-table
+          :headers="headers"
+          :items="tests"
+          :search="search"
+          hide-default-footer
+          no-data-text="У вас еще нет созданных опросов"
+          no-results-text="Не удалось найти подходящие записи"
+          loading-text="Загрузка данных.."
+          :loading="maskModel"
+      >
+        <template v-slot:top>
+          <v-row style="margin: 0 1.5%">
+            <v-text-field v-model="search" placeholder="Поиск по таблице" dense single-line
+                          style="margin-right: 10px"/>
+            <v-btn @click="loadData()" color="blue" outlined>Обновить</v-btn>
+          </v-row>
+        </template>
+        <template v-slot:item.key="{ item }">
+          <span @click="sendKeyToBuffer(item.key)">{{ item.key }}</span>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-btn color="blue" outlined @click="$router.replace({query: {...$route.query, resultTestKey: item.key}})">ответы</v-btn>
+          <v-btn color="blue" outlined @click="sendKeyToBuffer(item.key)">скопировать ключ</v-btn>
+          <v-btn color="blue" outlined>удалить</v-btn>
+        </template>
+      </v-data-table>
+    </v-row>
+    <result v-if="resultTestKey"/>
   </v-container>
 </template>
 
 <script>
 import axios from 'axios'
 import {mapActions, mapState} from "vuex"
-import LoadingMask from "../util/LoadingMask.vue"
+import LoadingMask from "../../util/LoadingMask.vue"
+import Result from "./Result.vue";
 
 export default {
-  components: {LoadingMask},
+  components: {Result, LoadingMask},
   computed: {
-    ...mapState("app", ["profile"])
+    ...mapState("app", ["profile"]),
+    resultTestKey() {
+      return this.$route.query.resultTestKey
+    }
   },
   data() {
     return {
@@ -50,7 +59,8 @@ export default {
         {text: 'Ключ опроса', value: 'key', align: 'center'},
         {text: 'Действия', value: 'actions', sortable: false, align: 'center'}
       ],
-      tests: []
+      tests: [],
+      search: ''
     }
   },
   methods: {
@@ -66,14 +76,14 @@ export default {
                 response => {
                   let tests = response.data.data.tests
                   for (let i = 0; i < tests.length; i++) {
-                    tests[i].creationDate = new Date(Date.parse(tests[i].creationDate))
-                    let validDay = tests[i].creationDate.getDay()
+                    let splitted = tests[i].creationDate.split('-')
+                    let validDay = splitted[2]
                     if (validDay.toString().length === 1)
                       validDay = `0${validDay}`
-                    let validMonth = tests[i].creationDate.getMonth()
+                    let validMonth = splitted[1]
                     if (validMonth.toString().length === 1)
                       validMonth = `0${validMonth}`
-                    tests[i].creationDate = `${validDay}.${validMonth}.${tests[i].creationDate.getFullYear()}`
+                    tests[i].creationDate = `${validDay}.${validMonth}.${splitted[0]}`
                     newTests.push(tests[i])
                   }
                 })

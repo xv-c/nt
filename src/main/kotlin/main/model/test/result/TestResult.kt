@@ -22,7 +22,7 @@ class TestResult {
     @JsonView(Views.Minimal::class)
     var respondent: User? = null
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(Views.Minimal::class)
     var answers: MutableList<TestResultAnswer>? = null
 }

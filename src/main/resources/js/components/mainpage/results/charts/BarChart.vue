@@ -7,7 +7,7 @@
             @mouseleave="$emit('mouseleavechild')"
             :height="30"
             :width="barWidth(item, chartData)"
-            :style="'fill:'+getRgb(item.color)+';stroke-width:1;stroke:rgb(0,0,0)'"/>
+            :style="`fill:${getRgb(item.color)};stroke-width:1;stroke:rgb(0,0,0)`"/>
       <text font-weight="bold"
             style="fill: black"
             :y="35*i+22"

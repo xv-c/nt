@@ -1,5 +1,6 @@
 package main.service
 
+import main.exceptions.ServiceException
 import main.model.User
 import main.model.test.result.TestResult
 import main.model.test.result.TestResultAnswer
@@ -9,7 +10,6 @@ import main.repo.TestAnswerVariantRepo
 import main.repo.TestRepo
 import main.repo.TestResultAnswerRepo
 import main.repo.TestResultRepo
-import org.hibernate.service.spi.ServiceException
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.stereotype.Service
 

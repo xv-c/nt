@@ -1,11 +1,11 @@
 package main.service
 
+import main.exceptions.ServiceException
 import main.model.test.test.Test
 import main.model.test.test.TestAnswerVariant
 import main.model.test.test.TestQuestion
 import main.model.User
 import main.repo.*
-import org.hibernate.service.spi.ServiceException
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -20,19 +20,22 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         return testRepo.findByCreator(userRepo.findByIdOrNull(user.id)!!)
     }
 
-    fun getUserTest(user: User?, key: String):Test{
-        val test = testRepo.findByKey(key.toLowerCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+    private fun getTest(key: String): Test {
+        return testRepo.findByKey(key.toUpperCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+    }
 
-        if (test.creator!! == user)
+    fun getTestForCreator(user: User?, key: String): Test {
+        val test = getTest(key)
+        if (test.creator == user)
             return test
         else
             throw ServiceException("Недостаточно прав для просмотра результатов")
     }
 
-    fun getTest(user: User?, key: String): Test {
-        val test = testRepo.findByKey(key.toLowerCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+    fun getTestForRespondent(user: User?, key: String): Test {
+        val test = getTest(key)
 
-        if (test.creator!! == user)
+        if (test.creator == user)
             return test
 
         if (test.loginRequired) {
@@ -69,12 +72,13 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         test.creationDate = Date(Calendar.getInstance().timeInMillis)
 
         while (true) {
-            val key = UUID.randomUUID().toString().substring(0..17).toLowerCase()
+            val key = UUID.randomUUID().toString().substring(0..17).toUpperCase()
             if (testRepo.findByKey(key) == null) {
                 test.key = key
                 break
             }
         }
+
         return testRepo.save(test)
     }
 
@@ -114,5 +118,17 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
             validQuestions.add(question)
         }
         return validQuestions
+    }
+
+    fun remove(user: User, key: String): Long {
+        val test = getTest(key)
+        return if (test.creator != user) -1
+        else {
+            testResultRepo.findByTest(test).forEach{
+                testResultRepo.delete(it)
+            }
+            testRepo.delete(test)
+            test.id
+        }
     }
 }

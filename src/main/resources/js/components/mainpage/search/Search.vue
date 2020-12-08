@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row justify="center" style="margin-top: 10%">
+    <v-row v-if="!testKey" justify="center" style="margin-top: 10%">
       <v-col cols="5">
         <v-text-field v-model="searchValue"
                       placeholder="Найти опрос по ключу..."
@@ -10,29 +10,35 @@
                       @click:append-outer="doSearch()"/>
       </v-col>
     </v-row>
+    <test v-if="testKey"/>
   </v-container>
 </template>
 
 <script>
 import {mapActions} from "vuex"
-import axios from 'axios'
+import Test from "./Test.vue";
 
 export default {
+  components: {Test},
   data() {
     return {
-      searchValue: ''
+      searchValue: '',
+    }
+  },
+  computed: {
+    testKey() {
+      return this.$route.query.testKey
     }
   },
   methods: {
     ...mapActions("app", ["showMessage"]),
-    doSearch(){
-      if(this.searchValue===''){
+    doSearch() {
+      if (this.searchValue === '') {
         this.showMessage('Нет опроса с таким ключом')
         return
       }
-
-      this.$router.push('/test/'+this.searchValue)
-    }
+      this.$router.replace({query: {...this.$route.query, testKey: this.searchValue}})
+    },
   }
 }
 </script>

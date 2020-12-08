@@ -1,7 +1,7 @@
 <template>
   <svg :width="chartRadius*2+8"
        :height="chartRadius*2+8">
-    <g v-if="chartData.length>1" v-for="(item, index) in animatedChartData">
+    <g v-if="chartData.length>1 && !singleAnswered()" v-for="(item, index) in animatedChartData">
       <path @mouseover="$emit('mouseoverchild', chartData[index])"
             @mouseleave="$emit('mouseleavechild')"
             :d="'M '+item.start[0] + ' ' + item.start[1] +
@@ -10,9 +10,8 @@
             :fill="getRgb(chartData[index].color)"
             :style="'transform-origin: center; transform: scale('+chartData[index].scale+', '+chartData[index].scale+')'"
             stroke="grey" stroke-width="2"/>
-
     </g>
-    <circle v-if="totalResults===1" :cx="chartRadius+4" :cy="chartRadius+4" :r="chartRadius"
+    <circle v-if="singleAnswered()" :cx="chartRadius+4" :cy="chartRadius+4" :r="chartRadius"
             style="transform-origin: center"
             :fill="getRgb(getNotEmptyColor())"
     />
@@ -57,13 +56,19 @@ export default {
       })
       accumulatingPercent += percent
     }
-    console.log(this.animatedChartData)
   },
   methods: {
     getNotEmptyColor() {
       for (let i = 0; i < this.chartData.length; i++)
         if (this.chartData[i].value !== 0)
           return this.chartData[i].color
+    },
+    singleAnswered(){
+      let count = 0
+      for (let i = 0; i < this.chartData.length; i++)
+        if (this.chartData[i].value !== 0)
+          count++
+      return count === 1
     },
     getRgb(item) {
       return 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'

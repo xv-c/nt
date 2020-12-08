@@ -14,31 +14,20 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/results/")
-class ResultController(val testService: TestService, val resultService: ResultService) {
+class ResultController(private val testService: TestService, val resultService: ResultService) {
 
     @GetMapping("{key}")
     @JsonView(Views.Minimal::class)
     fun getResults(
             @PathVariable key: String,
-            @AuthenticationPrincipal user: User?
-    ): ResponseEntity<*> {
-        if (user == null)
-            return ResponseFactory.fail("Необходимо авторизоваться")
-        val test: Test
-        try {
-            test = testService.getUserTest(user, key)
-        } catch (e: Exception) {
-            return ResponseFactory.fail(e.message)
-        }
-        var results: List<TestResult>? = null
-        try {
-            results = resultService.getResults(test)
-        } catch (e: Exception) {
-            ResponseFactory.fail(e.message)
-        }
+            @AuthenticationPrincipal user: User?):
+            ResponseEntity<*> {
+
+        val test = testService.getTestForCreator(user, key)
+        val results = resultService.getResults(test)
         return ResponseFactory.ok(
                 arrayOf("test", "results"),
-                arrayOf(test, results) as Array<Any>)
+                arrayOf(test, results))
     }
 
     @PostMapping("{key}")
@@ -46,14 +35,9 @@ class ResultController(val testService: TestService, val resultService: ResultSe
     fun postResult(
             @PathVariable key: String,
             @RequestParam("result") resultJson: String,
-            @AuthenticationPrincipal user: User?
-    ): ResponseEntity<*> {
-        val test: Test
-        try {
-            test = testService.getTest(user, key)
-        } catch (e: Exception) {
-            return ResponseFactory.fail(e.message)
-        }
+            @AuthenticationPrincipal user: User?):
+            ResponseEntity<*> {
+        val test = testService.getTestForRespondent(user, key)
         val testResult = resultService.parseResult(resultJson, test, user)
         val result = resultService.save(testResult)
         return ResponseFactory.ok("result", result)

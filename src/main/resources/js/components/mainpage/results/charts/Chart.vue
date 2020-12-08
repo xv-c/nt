@@ -1,9 +1,7 @@
 <template>
   <div>
     <v-dialog v-if="selectedItem" v-model="showDialog" width="300">
-      <v-color-picker v-model="selectedItem.color">
-
-      </v-color-picker>
+      <v-color-picker v-model="selectedItem.color"/>
     </v-dialog>
     <v-card width="850" tile>
       <v-card-title>
@@ -28,7 +26,7 @@
 
       <v-divider style="margin-top: -40px"/>
 
-      <v-card-text style="margin-top: -10px" id="chart">
+      <v-card-text :id="`chart-${id}`" style="margin-top: -10px">
         <v-row>
           <svg :width="325"
                :height="animatedChartData.length*30+10">
@@ -71,13 +69,14 @@
 
 <script>
 import html2canvas from "html2canvas"
+import axios from 'axios'
 import {saveAs} from 'file-saver'
 import BarChart from "./BarChart.vue"
 import PieChart from "./PieChart.vue"
 
 export default {
   components: {PieChart, BarChart},
-  props: ['chartData', 'totalResults'],
+  props: ['chartData', 'totalResults', 'id'],
   data() {
     return {
       selectedItem: undefined,
@@ -104,7 +103,6 @@ export default {
       })
     }
     this.fillColors()
-
   },
   methods: {
     fillColors() {
@@ -142,14 +140,13 @@ export default {
     handleMouseOverChild(item) {
       this.focusItem(item)
     },
+    getImg() {
+      let chart = document.getElementById(`chart-${this.id}`)
+      return  html2canvas(chart, {imageTimeout: 0, scale: 3, scrollX: 0, scrollY: -window.scrollY})
+    },
     saveImg() {
-      let chart = document.getElementById('chart')
-
-      html2canvas(chart, {scale: 3}).then(function (canvas) {
-        canvas.toBlob(function (blob) {
-          saveAs(blob, "diagram.png");
-        })
-      })
+      this.getImg()
+          .then(canvas => canvas.toBlob(blob => saveAs(blob, 'diagram.png')))
     },
     getRgb(item) {
       return 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'

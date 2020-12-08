@@ -10,14 +10,16 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("/")
-class HomeController(val userRepo: UserRepo) {
+class HomeController(private val userRepo: UserRepo) {
 
     @GetMapping
-    fun hello(@AuthenticationPrincipal user: User?, model: Model): String {
+    fun hello(
+            @AuthenticationPrincipal user: User?,
+            model: Model)
+            : String {
 
-        if (user != null) {
+        if (user != null)
             model.addAttribute("user", userRepo.findByUsername(user.username))
-        }
 
         return "index"
     }

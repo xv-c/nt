@@ -59,8 +59,4 @@ class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) 
         user.roles.add(User.Roles.USER)
         return userRepo.save(user)
     }
-
-    fun get(): List<User> {
-        return userRepo.findAll()
-    }
 }
