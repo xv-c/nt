@@ -2,8 +2,6 @@ package main.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
 import main.model.User
-import main.model.test.result.TestResult
-import main.model.test.test.Test
 import main.service.ResultService
 import main.service.TestService
 import main.util.ResponseFactory

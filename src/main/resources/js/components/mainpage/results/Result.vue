@@ -24,7 +24,7 @@
 
           <v-tab-item :transition="false" :reverse-transition="false">
             <v-toolbar tile flat>
-              <v-btn @click="getPptx()" text>скачать как&nbsp;<span style="color: orange">pptx</span></v-btn>
+              <v-btn @click="getPptx()" text>скачать как&nbsp;<b style="color: #D35230">pptx</b></v-btn>
             </v-toolbar>
             <v-row v-for="(data, index) in chartsData" :key="undefined"
                    style="margin-top: 20px" justify="center">
@@ -50,6 +50,7 @@
                      :chart-data="data.variants"
                      ref="chart"
                      :id="index"
+                     :question="test.questions[index].question"
               />
             </v-row>
           </v-tab-item>
@@ -66,7 +67,6 @@
 
 <script>
 import axios from 'axios'
-import {saveAs} from 'file-saver'
 import {mapActions} from "vuex"
 import LoadingMask from "../../util/LoadingMask.vue"
 import Chart from "./charts/Chart.vue"
@@ -86,34 +86,34 @@ export default {
   },
   methods: {
     ...mapActions("app", ["showMessage"]),
-    async getImages() {
-      let images = []
-      for (let chart of this.$refs.chart)
-        await chart.getImg().then(canvas => canvas.toBlob(blob => images.push(blob)))
-      return images
-    },
     async getPptx() {
+      this.maskModel = true
+      let promises = this.$refs.chart.map(chart => {
+        return new Promise(async resolve => {
+          let canvas = await chart.getImg(3)
+          canvas.toBlob(resolve, 'image/jpeg', 0.75);
+        });
+      });
 
-      let images = await this.getImages()
-      let data = new FormData()
+      await Promise.all(promises).then(blobs => {
+        let data = new FormData()
+        data.append("key", this.test.key)
+        for (let i = 0; i < blobs.length; i++) {
+          data.append('images[]', blobs[i])
+        }
 
-      for (let i = 0; i < images.length; i++) {
-        data.append('images[]', images[i])
-      }
-
-      console.log("res")
-      console.log(images.length)
-      console.log("res")
-      console.log(images)
-      axios.post('api/files', data)
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'f.pptx');
-            document.body.appendChild(link);
-            link.click();
-          });
+        axios.post('api/files', data, {responseType: 'blob'})
+            .then((response) => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'presentation.pptx');
+              document.body.appendChild(link);
+              link.click();
+            })
+            .finally(() => this.maskModel = false)
+      })
+          .finally(() => this.maskModel = false);
     },
     returnToResults() {
       let query = Object.assign({}, this.$route.query)

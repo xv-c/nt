@@ -1,10 +1,10 @@
 package main.service
 
 import main.exceptions.ServiceException
+import main.model.User
 import main.model.test.test.Test
 import main.model.test.test.TestAnswerVariant
 import main.model.test.test.TestQuestion
-import main.model.User
 import main.repo.*
 import org.springframework.boot.json.JsonParserFactory
 import org.springframework.data.repository.findByIdOrNull
@@ -20,7 +20,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         return testRepo.findByCreator(userRepo.findByIdOrNull(user.id)!!)
     }
 
-    private fun getTest(key: String): Test {
+    fun getTest(key: String): Test {
         return testRepo.findByKey(key.toUpperCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
     }
 

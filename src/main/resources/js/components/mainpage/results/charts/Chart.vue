@@ -29,12 +29,18 @@
       <v-card-text :id="`chart-${id}`" style="margin-top: -10px">
         <v-row>
           <svg :width="325"
-               :height="animatedChartData.length*30+10">
+               :height="animatedChartData.length*30+40">
+            <text font-weight="bold"
+                  :y="20"
+                  :x="35"
+                  style="fill: black; font-size: 20px">
+              {{ question }}
+            </text>
             <g v-for="(item, index) in animatedChartData">
               <text @mouseover="focusItem(item)"
                     @mouseleave="resetColors()"
                     font-weight="bold"
-                    :y="index*30+4.2*5"
+                    :y="index*30+4.2*5 + 30"
                     :x="35"
                     style="fill: black">
                 {{ item.text }} ({{ item.value }} {{ getLocalizedText(item.value) }})
@@ -44,7 +50,7 @@
                     @mouseleave="resetColors()"
                     :height="25" :width="25"
                     :x="5"
-                    :y="index*30+5"
+                    :y="index * 30 + 35"
                     :style="'transform-origin: center; ' +
                                    'transform: scale('+animatedChartData[index].scale+', '+animatedChartData[index].scale+'); ' +
                                     'fill:'+getRgb(animatedChartData[index].color)+';' +
@@ -69,14 +75,12 @@
 
 <script>
 import html2canvas from "html2canvas"
-import axios from 'axios'
-import {saveAs} from 'file-saver'
 import BarChart from "./BarChart.vue"
 import PieChart from "./PieChart.vue"
 
 export default {
   components: {PieChart, BarChart},
-  props: ['chartData', 'totalResults', 'id'],
+  props: ['chartData', 'totalResults', 'id', 'question'],
   data() {
     return {
       selectedItem: undefined,
@@ -140,13 +144,9 @@ export default {
     handleMouseOverChild(item) {
       this.focusItem(item)
     },
-    getImg() {
+    getImg(scale) {
       let chart = document.getElementById(`chart-${this.id}`)
-      return  html2canvas(chart, {imageTimeout: 0, scale: 3, scrollX: 0, scrollY: -window.scrollY})
-    },
-    saveImg() {
-      this.getImg()
-          .then(canvas => canvas.toBlob(blob => saveAs(blob, 'diagram.png')))
+      return html2canvas(chart, {imageTimeout: 0, scale: scale, scrollX: 0, scrollY: -window.scrollY})
     },
     getRgb(item) {
       return 'rgb(' + item.r + ',' + item.g + ',' + item.b + ')'

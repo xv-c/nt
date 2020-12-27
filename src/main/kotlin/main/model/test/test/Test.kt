@@ -1,7 +1,6 @@
 package main.model.test.test
 
 import com.fasterxml.jackson.annotation.JsonView
-import jdk.jfr.Timestamp
 import main.model.User
 import main.util.Views
 import java.sql.Date

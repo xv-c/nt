@@ -1,8 +1,6 @@
 package main.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
-import main.exceptions.ServiceException
-import main.model.test.test.TestQuestion
 import main.model.User
 import main.service.TestService
 import main.util.ResponseFactory

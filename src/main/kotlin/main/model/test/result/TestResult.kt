@@ -3,7 +3,6 @@ package main.model.test.result
 import com.fasterxml.jackson.annotation.JsonView
 import main.model.User
 import main.model.test.test.Test
-import main.model.test.test.TestQuestion
 import main.util.Views
 import javax.persistence.*
 
