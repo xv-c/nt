@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.io.InputStream
-import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpServpletResponse
 
 @RestController
 @RequestMapping("api/files")
@@ -22,7 +22,8 @@ class FileController(var filesCreator: FilesCreator) {
 
         val headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_OCTET_STREAM
-        response.setHeader("Content-Disposition", "attachment; filename=presentation.pptx")
+        headers["Content-Disposition"] = "attachment; filename=presentation.pptx"
+
         return HttpEntity(pptx, headers)
     }
 }

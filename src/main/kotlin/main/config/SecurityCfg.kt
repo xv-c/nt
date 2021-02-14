@@ -14,7 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class SecurityCfg(private val passwordEncoder: PasswordEncoder, private val userService: UserService) : WebSecurityConfigurerAdapter() {
+class SecurityCfg(private val passwordEncoder: PasswordEncoder, private val userService: UserService)
+    : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
         http
