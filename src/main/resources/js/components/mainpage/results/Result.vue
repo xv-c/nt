@@ -1,68 +1,79 @@
 <template>
-  <div>
-    <loading-mask :mask-model="maskModel"/>
+  <v-col>
     <v-row>
       <v-btn @click="returnToResults()" :ripple="false" text>
         <v-icon>keyboard_arrow_left</v-icon>
         вернутся к списку результатов
       </v-btn>
     </v-row>
+    <loading-mask :mask-model="maskModel"/>
     <v-row justify="center" v-if="test && results">
-      <v-card tile width="950">
-        <v-card-title>
-          <span style="color: grey">Результаты по опросу:&nbsp;&nbsp;</span>{{ test.name }}
-          <v-spacer/>
-          <span style="color: grey">Ключ:&nbsp;&nbsp;</span>{{ test.key }}
-        </v-card-title>
-        <v-card-title style="margin-top: -30px">
-          <span style="color: grey">Ответов:&nbsp;&nbsp;</span>{{ results.length }}
-        </v-card-title>
-        <v-tabs v-if="results.length>0" active-class="selected-tab" hide-slider color="black"
-                style="margin-bottom: 35px">
-          <v-tab>ответы</v-tab>
-          <v-tab>анализ</v-tab>
+      <v-card color="#ADD8E6" width="1000">
+        <v-row justify="center" style="margin-top: 20px">
+          <v-card width="950">
+            <v-card-title>
+              <span style="color: grey">Результаты по опросу:&nbsp;&nbsp;</span>{{ test.name }}
+              <v-spacer/>
+              <span style="color: grey">Ключ:&nbsp;&nbsp;</span>{{ test.key }}
+            </v-card-title>
+            <v-card-title style="margin-top: -30px">
+              <span style="color: grey">Ответов:&nbsp;&nbsp;</span>{{ results.length }}
+            </v-card-title>
+          </v-card>
+        </v-row>
+        <v-row justify="center" style="margin-top: 20px; margin-bottom: 15px">
+          <v-card width="950">
+            <v-tabs v-if="results.length>0"
+                    active-class="selected-tab" hide-slider
+                    background-color="#5AACC7"
+                    color="black"
+                    style="margin-bottom: 35px">
+              <v-tab>ответы</v-tab>
+              <v-tab>анализ</v-tab>
 
-          <v-tab-item :transition="false" :reverse-transition="false">
-            <v-toolbar tile flat>
-              <v-btn @click="getPptx()" text>скачать как&nbsp;<b style="color: #D35230">pptx</b></v-btn>
-            </v-toolbar>
-            <v-row v-for="(data, index) in chartsData" :key="undefined"
-                   style="margin-top: 20px" justify="center">
-              <v-row style="margin: 10px 5%;">
+              <v-tab-item :transition="false" :reverse-transition="false">
+                <v-toolbar tile flat>
+                  <v-btn @click="getPptx()" text>скачать как&nbsp;<b style="color: #D35230">pptx</b></v-btn>
+                </v-toolbar>
+                <v-row v-for="(data, index) in chartsData" :key="undefined"
+                       style="margin-top: 20px" justify="center">
+                  <v-row style="margin: 10px 5%;">
                 <span style="color: grey; font-weight: bold; font-size: large">{{
                     test.questions[index].question
                   }}</span>
-                <v-spacer/>
-                <span style="color: #5AACC7">Вопрос #{{ index + 1 }}</span>
-              </v-row>
+                    <v-spacer/>
+                    <span style="color: #5AACC7">Вопрос #{{ index + 1 }}</span>
+                  </v-row>
 
-              <v-card v-if="data.type==='TEXT'"
-                      tile
-                      width="850">
-                <v-card-title v-for="(answer, index) in data.results" :key="undefined">
-                  <v-chip :style="index>0?'margin-top:-3%':''">
-                    {{ answer }}
-                  </v-chip>
-                </v-card-title>
-              </v-card>
-              <chart v-if="data.type!=='TEXT'"
-                     :total-results="results.length"
-                     :chart-data="data.variants"
-                     ref="chart"
-                     :id="index"
-                     :question="test.questions[index].question"
-              />
-            </v-row>
-          </v-tab-item>
+                  <v-card v-if="data.type==='TEXT'"
+                          tile
+                          width="850">
+                    <v-card-title v-for="(answer, index) in data.results" :key="undefined">
+                      <v-chip :style="index>0?'margin-top:-3%':''">
+                        {{ answer }}
+                      </v-chip>
+                    </v-card-title>
+                  </v-card>
+                  <chart v-if="data.type!=='TEXT'"
+                         :total-results="results.length"
+                         :chart-data="data.variants"
+                         ref="chart"
+                         :id="index"
+                         :question="test.questions[index].question"
+                  />
+                </v-row>
+              </v-tab-item>
 
-          <v-tab-item :transition="false" :reverse-transition="false">
-            <v-btn>TODO</v-btn>
-          </v-tab-item>
+              <v-tab-item :transition="false" :reverse-transition="false">
+                <v-btn>TODO</v-btn>
+              </v-tab-item>
 
-        </v-tabs>
+            </v-tabs>
+          </v-card>
+        </v-row>
       </v-card>
     </v-row>
-  </div>
+  </v-col>
 </template>
 
 <script>
@@ -70,6 +81,7 @@ import axios from 'axios'
 import {mapActions} from "vuex"
 import LoadingMask from "../../util/LoadingMask.vue"
 import Chart from "./charts/Chart.vue"
+import PptxGenJS from "pptxgenjs";
 
 export default {
   components: {
@@ -88,32 +100,30 @@ export default {
     ...mapActions("app", ["showMessage"]),
     async getPptx() {
       this.maskModel = true
-      let promises = this.$refs.chart.map(chart => {
-        return new Promise(async resolve => {
-          let canvas = await chart.getImg(3)
-          canvas.toBlob(resolve, 'image/jpeg', 0.75);
-        });
-      });
+      let canvasPromises = this.$refs.chart.map(chart => chart.getImg(3));
 
-      await Promise.all(promises).then(blobs => {
-        let data = new FormData()
-        data.append("key", this.test.key)
-        for (let i = 0; i < blobs.length; i++) {
-          data.append('images[]', blobs[i])
+      await Promise.all(canvasPromises).then(canvases => {
+        let pres = new PptxGenJS()
+        let maxW = Math.max.apply(Math, canvases.map(c => c.width))
+        let maxH = Math.max.apply(Math, canvases.map(c => c.height))
+
+        pres.defineLayout({ name:'A33', width:maxW/96, height:maxH/96 });
+        pres.layout = 'A33'
+
+        for (let i = 0; i < canvases.length; i++) {
+          let canvas = canvases[i]
+          let slide = pres.addSlide()
+          slide.addImage({
+            data: canvas.toDataURL(),
+            w: `${parseInt(`${100.0 * canvas.width / maxW}`)}'%'`,
+            h: `${parseInt(`${100.0 * canvas.height / maxH}`)}'%'`,
+          })
         }
-
-        axios.post('api/files', data, {responseType: 'blob'})
-            .then((response) => {
-              const url = window.URL.createObjectURL(new Blob([response.data]));
-              const link = document.createElement('a');
-              link.href = url;
-              link.setAttribute('download', 'presentation.pptx');
-              document.body.appendChild(link);
-              link.click();
-            })
-            .finally(() => this.maskModel = false)
+        pres.writeFile('presentation');
       })
-          .finally(() => this.maskModel = false);
+      .finally(() => {
+        this.maskModel = false
+      })
     },
     returnToResults() {
       let query = Object.assign({}, this.$route.query)

@@ -15,8 +15,8 @@ class HomeController(private val userRepo: UserRepo) {
     @GetMapping
     fun hello(
             @AuthenticationPrincipal user: User?,
-            model: Model)
-            : String {
+            model: Model
+    ): String {
 
         if (user != null)
             model.addAttribute("user", userRepo.findByUsername(user.username))

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <loading-mask :mask-model="maskModel"/>
     <v-row justify="center">
       <span v-if="!profile" style="font-size: large; margin-top: 5%"><b>Пожалуйста, <a @click="openAuthForm">авторизуйтесь</a>, чтобы просмотреть результаты опросов!</b></span>

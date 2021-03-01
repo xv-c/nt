@@ -8,10 +8,11 @@
 
     <v-row v-if="profile" justify="center">
       <v-card width="650" color="#ADD8E6">
-        <v-row justify="center" :key="undefined" style="margin-top: 20px">
+        <v-row justify="center" style="margin-top: 20px">
           <v-card width="600">
             <v-card-title>
-              <v-text-field v-model="name" counter="50" :color="name.length===0? 'red' : 'blue'"
+              <v-text-field v-model="name" counter="50"
+                            :color="name.length === 0 ? 'red' : 'blue'"
                             outlined dense
                             hint="Поле не может быть пустым"
                             :persistent-hint="name.length===0"
