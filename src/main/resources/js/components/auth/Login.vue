@@ -1,20 +1,26 @@
 <template>
   <div>
     <v-card-text>
-      <v-col>
-        <v-text-field placeholder="Электронная почта" clearable dense solo single-line
-                      prepend-inner-icon="mail"
-                      v-model="username"/>
-        <v-text-field placeholder="Пароль" dense solo single-line
-                      prepend-inner-icon="lock"
-                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="show ? 'text' : 'password'"
-                      v-model="password"
-                      @click:append="show = !show"/>
-      </v-col>
+      <v-text-field
+          v-model="username"
+          placeholder="Электронная почта"
+          clearable
+          dense solo single-line
+          prepend-inner-icon="mail"
+      />
+      <v-text-field
+          v-model="password"
+          placeholder="Пароль"
+          dense solo single-line
+          hide-details
+          prepend-inner-icon="lock"
+          :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="show ? 'text' : 'password'"
+          @click:append="show = !show"
+      />
     </v-card-text>
 
-    <v-card-actions style="margin-top: -20px">
+    <v-card-actions>
       <v-spacer/>
       <v-btn :ripple="false" @click="login" outlined color="blue">Войти</v-btn>
       <v-spacer/>
@@ -23,12 +29,11 @@
 </template>
 
 <script>
-import axios from "axios";
-import {mapActions} from "vuex";
+import {mapActions} from "vuex"
+import api from "../../use/api"
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       username: '',
@@ -38,25 +43,16 @@ export default {
   },
   methods: {
     ...mapActions('app', ["showMessage"]),
-    login() {
-      const vue = this
-
+    async login() {
       let formData = new FormData();
       formData.append("username", this.username)
       formData.append("password", this.password)
 
-      axios.post("/api/login", formData)
-          .then(
-              response => {
-                vue.$router.go()
-              })
-          .catch(
-              error => {
-                if (error.response.data.message)
-                  vue.showMessage(error.response.data.message)
-                else
-                  vue.showMessage("Некорректная почта и/или пароль")
-              })
+      let resp = await api.post("/api/login", formData)
+      if (!resp.success)
+        this.showMessage(resp.message)
+      else
+        this.$router.go()
     }
   }
 }

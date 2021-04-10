@@ -15,8 +15,8 @@ class ExceptionsHandler {
         return ResponseFactory.fail(e.message)
     }
 
-    @ExceptionHandler(ServiceException::class)
-    fun handleServiceException(e: ServiceException): ResponseEntity<*> {
+    @ExceptionHandler(RestException::class)
+    fun handleServiceException(e: RestException): ResponseEntity<*> {
         return ResponseFactory.fail(e.message)
     }
 }

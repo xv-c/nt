@@ -1,6 +1,6 @@
 package main.service
 
-import main.exceptions.ServiceException
+import main.exceptions.RestException
 import main.model.User
 import main.model.test.result.TestResult
 import main.model.test.result.TestResultAnswer
@@ -30,7 +30,7 @@ class ResultService(
         val answersList = JsonParserFactory.getJsonParser().parseList(resultJson)
 
         if (answersList.size != test.questions.size)
-            throw ServiceException("Количество ответов не совпадает с количеством вопросов в опросе")
+            throw RestException("Количество ответов не совпадает с количеством вопросов в опросе")
 
         testResult.answers = mutableListOf()
         for (index in 0 until answersList.size) {

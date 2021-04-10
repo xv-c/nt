@@ -1,9 +1,8 @@
 package main.service
 
-import main.exceptions.ServiceException
+import main.exceptions.RestException
 import main.model.User
 import main.repo.UserRepo
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) : UserDetailsService {
 
-    override fun loadUserByUsername(userName: String): UserDetails {
+    override fun loadUserByUsername(userName: String): User {
         return userRepo.findByUsername(userName) ?: throw UsernameNotFoundException("Пользователь $userName не найден")
     }
 
@@ -45,12 +44,12 @@ class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) 
     fun saveUser(username: String, nickname: String, password: String): User {
         val errors = isValid(username, nickname, password)
         if (errors.isNotEmpty())
-            throw ServiceException(errors)
+            throw RestException(errors)
 
         var user = userRepo.findByUsername(username.toLowerCase())
 
         if (user != null)
-            throw ServiceException("Пользователь с такой почтой уже зарегистрирован")
+            throw RestException("Пользователь с такой почтой уже зарегистрирован")
 
         user = User()
         user.username = username.toLowerCase()

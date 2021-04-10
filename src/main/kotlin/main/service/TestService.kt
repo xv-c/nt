@@ -1,6 +1,6 @@
 package main.service
 
-import main.exceptions.ServiceException
+import main.exceptions.RestException
 import main.model.User
 import main.model.test.test.Test
 import main.model.test.test.TestAnswerVariant
@@ -21,7 +21,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
     }
 
     fun getTest(key: String): Test {
-        return testRepo.findByKey(key.toUpperCase()) ?: throw ServiceException("Не удалось найти опрос с таким ключом")
+        return testRepo.findByKey(key.toUpperCase()) ?: throw RestException("Не удалось найти опрос с таким ключом")
     }
 
     fun getTestForCreator(user: User?, key: String): Test {
@@ -29,7 +29,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
         if (test.creator == user)
             return test
         else
-            throw ServiceException("Недостаточно прав для просмотра результатов")
+            throw RestException("Недостаточно прав для просмотра результатов")
     }
 
     fun getTestForRespondent(user: User?, key: String): Test {
@@ -40,9 +40,9 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
 
         if (test.loginRequired) {
             if (user == null)
-                throw ServiceException("Для данного опроса необходимо авторизоваться")
+                throw RestException("Для данного опроса необходимо авторизоваться")
             else if (testResultRepo.findByRespondentAndTest(user, test) != null)
-                throw ServiceException("Вы уже проходили этот опрос")
+                throw RestException("Вы уже проходили этот опрос")
         }
 
         return test
@@ -87,18 +87,18 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
 
             question.question = questionMap["question"] as String
             if (question.question.isEmpty() || question.question.length > 200)
-                throw ServiceException("Вопрос не может быть пустым и не может превышать длину в 200 символов")
+                throw RestException("Вопрос не может быть пустым и не может превышать длину в 200 символов")
             try {
                 question.type = TestQuestion.QuestionType.valueOf(questionMap["type"] as String)
             } catch (e: Exception) {
-                throw ServiceException("Недопустимый тип вопроса")
+                throw RestException("Недопустимый тип вопроса")
             }
 
             if (question.type != TestQuestion.QuestionType.TEXT) {
                 val validVariants = ArrayList<TestAnswerVariant>()
 
                 if ((questionMap["variants"] as ArrayList<*>).size == 0)
-                    throw ServiceException("Вопрос данного типа обязан иметь хотя бы один вариант ответа")
+                    throw RestException("Вопрос данного типа обязан иметь хотя бы один вариант ответа")
 
                 (questionMap["variants"] as ArrayList<*>).forEach { jsonVariant ->
                     val variantMap = jsonVariant as Map<*, *>
@@ -107,7 +107,7 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
 
                     if (variant.value.isEmpty() ||
                             variant.value.length > 50)
-                        throw ServiceException("Вариант ответа не может быть пустым и не может превышать длину в 50 символов")
+                        throw RestException("Вариант ответа не может быть пустым и не может превышать длину в 50 символов")
                     validVariants.add(variant)
                 }
                 question.variants = validVariants

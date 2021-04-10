@@ -1,49 +1,71 @@
 <template>
-  <div>
-    <v-card-text>
-      <v-col>
-        <v-text-field placeholder="Имя пользователя" clearable dense solo single-line counter="20"
-                      prepend-inner-icon="person"
-                      :color="nickname.length<5?'red':undefined"
-                      :persistent-hint="nickname.length<5"
-                      hint="Поле должно содержать минимум 5 символов"
-                      v-model="nickname"/>
-        <v-text-field placeholder="Электронная почта" clearable dense solo single-line
-                      prepend-inner-icon="mail"
-                      :persistent-hint="username.length===0"
-                      v-model="username"/>
-        <v-text-field placeholder="Пароль" dense solo single-line counter="64"
-                      prepend-inner-icon="lock"
-                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="show ? 'text' : 'password'"
-                      v-model="password"
-                      :color="password.length<8?'red':undefined"
-                      :persistent-hint="password.length<8"
-                      hint="Поле должно содержать минимум 8 символов"
-                      @click:append="show = !show"/>
-        <v-text-field placeholder="Подтверждение пароля" dense solo single-line counter="64"
-                      prepend-inner-icon="lock"
-                      :color="match===''?undefined:'red'"
-                      :hint="match"
-                      :persistent-hint="match!==''"
-                      :append-icon="showConf ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="showConf ? 'text' : 'password'"
-                      v-model="confirmPassword"
-                      @click:append="showConf = !showConf"/>
-      </v-col>
-    </v-card-text>
-    <v-card-actions style="margin-top: -25px">
-      <v-spacer/>
-      <v-col>
-        <v-btn @click="register" outlined color="blue"
-               :disabled="confirmPassword.length===0 || match!=='' ||
-                       password.length<8 || password.length>64 || username.length===0 || nickname.length<5 || nickname.length>20">
-          Зарегистрироваться
-        </v-btn>
-      </v-col>
-      <v-spacer/>
-    </v-card-actions>
-  </div>
+    <div>
+        <v-card-text>
+            <v-text-field
+                v-model="nickname"
+                placeholder="Имя пользователя"
+                clearable
+                dense solo single-line
+                counter="20"
+                :persistent-hint="nickname.length<5"
+                hint="Поле должно содержать минимум 5 символов"
+            >
+                <template slot="prepend-inner">
+                    <v-icon :color="nickname.length<5?'red':'blue'">person</v-icon>
+                </template>
+            </v-text-field>
+            <v-text-field
+                v-model="username"
+                placeholder="Электронная почта"
+                clearable
+                dense solo single-line
+            >
+                <template slot="prepend-inner">
+                    <v-icon :color="validMail?'blue':'red'">mail</v-icon>
+                </template>
+            </v-text-field>
+            <v-text-field
+                v-model="password"
+                placeholder="Пароль"
+                dense solo single-line
+                counter="64"
+                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show ? 'text' : 'password'"
+
+                :persistent-hint="password.length<8"
+                hint="Поле должно содержать минимум 8 символов"
+                @click:append="show = !show"
+            >
+                <template slot="prepend-inner">
+                    <v-icon :color="password.length<8?'red':'blue'">mail</v-icon>
+                </template>
+            </v-text-field>
+            <v-text-field
+                v-model="confirmPassword"
+                placeholder="Подтверждение пароля"
+                dense solo single-line
+                counter="64"
+
+                :hint="match"
+                :persistent-hint="match!==''"
+                :append-icon="showConf ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="showConf ? 'text' : 'password'"
+                @click:append="showConf = !showConf"
+            >
+                <template slot="prepend-inner">
+                    <v-icon :color="match===''?'blue':'red'">lock</v-icon>
+                </template>
+            </v-text-field>
+        </v-card-text>
+        <v-card-actions class="mt-n4">
+            <v-spacer/>
+            <v-btn @click="register" outlined color="blue"
+                   :disabled="notValid">
+                Зарегистрироваться
+            </v-btn>
+            <v-spacer/>
+        </v-card-actions>
+    </div>
 </template>
 
 <script>
@@ -51,47 +73,46 @@ import axios from 'axios'
 import {mapActions} from "vuex"
 
 export default {
-  components: {
-  },
-  data() {
-    return {
-      nickname: '',
-      username: '',
-      password: '',
-      confirmPassword: '',
-      show: false,
-      showConf: false,
-    }
-  },
-  computed: {
-    match() {
-      return this.confirmPassword.length > 0 && this.confirmPassword === this.password ? "" : "Пароли не совпадают"
-    }
-  },
-  methods: {
-    ...mapActions('app', ["showMessage"]),
-    register() {
-      const vue = this
+    components: {},
+    data() {
+        return {
+            nickname: '',
+            username: '',
+            password: '',
+            confirmPassword: '',
+            show: false,
+            showConf: false,
+        }
+    },
+    computed: {
+        notValid() {
+            return this.confirmPassword.length === 0 || this.match !== ''
+                || this.password.length < 8 || this.password.length > 64
+                || this.username.length === 0 || !this.validMail
+                || this.nickname.length < 5 || this.nickname.length > 20
+        },
+        validMail() {
+            const regex = /^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/gm
+            return regex.test(this.username)
+        },
+        match() {
+            return this.confirmPassword.length > 0 && this.confirmPassword === this.password ? "" : "Пароли не совпадают"
+        }
+    },
+    methods: {
+        ...mapActions('app', ["showMessage"]),
+        register() {
+            const vue = this
 
-      if (this.confirmPassword !== this.password) {
-        vue.showMessage('Пароли не совпадают')
-      }
-
-      let formData = new FormData();
-      formData.append("nickname", this.nickname)
-      formData.append("username", this.username)
-      formData.append("password", this.password)
-      axios.post("/api/users", formData)
-          .then(
-              function (response) {
-                vue.showMessage("Пользователь успешно зарегистрирован")
-              })
-          .catch(
-              function (error) {
-                vue.showMessage(error.response.data.message)
-              })
+            let formData = new FormData();
+            formData.append("nickname", this.nickname)
+            formData.append("username", this.username)
+            formData.append("password", this.password)
+            axios.post("/api/users", formData)
+                .then(response => vue.showMessage("Пользователь успешно зарегистрирован"))
+                .catch(error => vue.showMessage(error.response.data.message))
+        }
     }
-  }
 }
 </script>
 

@@ -20,41 +20,31 @@
         <v-spacer/>
       </v-card-title>
 
-      <v-row style="margin-left: 10px; margin-right: 10px">
-        <v-col>
-          <v-divider/>
-        </v-col>
+      <v-row class="mx-4 py-4">
+        <v-divider/>
       </v-row>
 
       <login v-if="isLogin"></login>
       <registration v-if="!isLogin"/>
 
-      <v-row style="margin-left: 10px; margin-right: 10px">
-        <v-col cols="5">
-          <v-divider/>
-        </v-col>
-        <v-col style="text-align: center; margin-top: -10px" cols="2">
-          <span>или</span>
-        </v-col>
-        <v-col cols="5">
-          <v-divider/>
-        </v-col>
+      <v-row class="mx-4 py-4" align="center" justify="center">
+        <v-divider/>
+        <span class="mx-4">или</span>
+        <v-divider/>
       </v-row>
 
       <v-card-actions>
-        <v-col>
-          <v-expansion-panels style="color: blue">
-            <v-expansion-panel>
-              <v-expansion-panel-header><b>Авторизоваться с помощью сервиса</b>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-btn text>
-                  <v-icon color="blue">fab fa-google</v-icon>&nbsp;&nbsp;Google
-                </v-btn>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-col>
+        <v-expansion-panels style="color: blue">
+          <v-expansion-panel>
+            <v-expansion-panel-header><b>Авторизоваться с помощью сервиса</b>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-btn text>
+                <v-icon color="blue">fab fa-google</v-icon>&nbsp;&nbsp;Google
+              </v-btn>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-card-actions>
     </v-card>
   </v-dialog>

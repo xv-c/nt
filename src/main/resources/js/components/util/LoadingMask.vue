@@ -1,6 +1,6 @@
 <template>
     <v-dialog width="260" persistent v-model="maskModel">
-        <v-card>
+        <v-card class="pa-4">
             <v-card-title>
                 <v-row justify="center">
                     <v-progress-circular indeterminate color="blue"/>
