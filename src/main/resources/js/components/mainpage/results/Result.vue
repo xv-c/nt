@@ -24,10 +24,11 @@
         <v-row justify="center" style="margin-top: 20px; margin-bottom: 15px">
           <v-card width="950">
             <v-tabs v-if="results.length>0"
+                    grow
                     active-class="selected-tab" hide-slider
                     background-color="#5AACC7"
                     color="black"
-                    style="margin-bottom: 35px">
+                    style="border-radius: 0; margin-bottom: 35px">
               <v-tab>ответы</v-tab>
               <v-tab>анализ</v-tab>
 

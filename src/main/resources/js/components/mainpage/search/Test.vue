@@ -61,12 +61,15 @@
                             outlined placeholder="Впишите ответ сюда"
                             counter="200"
                             v-model="answerForm[questionIndex].value"
+                            hint="Поле не может быть пустым"
+                            :persistent-hint="answerForm[questionIndex].value.length===0"
+                            :color="answerForm[questionIndex].value.length === 0 ? 'red' : 'blue'"
                             style="margin-left: 4%; margin-right: 4%; margin-top: 20px"/>
               </template>
             </v-card-text>
             <v-card-actions>
               <v-spacer/>
-              <v-btn @click="submit()" color="blue" outlined>отправить</v-btn>
+              <v-btn :disabled="!valid" @click="submit()" color="blue" outlined>отправить</v-btn>
               <v-spacer/>
             </v-card-actions>
           </v-card>
@@ -87,6 +90,18 @@ export default {
       test: undefined,
       answerForm: [],
     }
+  },
+  computed: {
+    valid() {
+      for (let i = 0; i < this.answerForm.length; i++) {
+        if (this.test.questions[i].type === 'TEXT'){
+          let answer = this.answerForm[i]
+          if (answer.value.length === 0)
+            return false
+        }
+      }
+      return true
+    },
   },
   methods: {
     ...mapActions("app", ["showMessage"]),

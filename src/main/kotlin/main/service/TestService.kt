@@ -59,9 +59,6 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
                 it.variants = variants
             }
         }
-        validQuestions.forEach {
-            questions.add(testQuestionRepo.save(it))
-        }
 
         val test = Test()
         test.name = name

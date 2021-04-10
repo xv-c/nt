@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 import javax.persistence.*
+import kotlin.collections.HashSet
 
 @Entity(name = "usr")
 class User : UserDetails {
@@ -29,11 +30,11 @@ class User : UserDetails {
     @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(value = EnumType.STRING)
     @JsonView(Views.Minimal::class)
-    var roles: MutableList<Roles> = mutableListOf()
+    var roles: MutableSet<Roles> = mutableSetOf<Roles>()
 
     constructor()
 
-    constructor(id: Long, username: String, login: String, password: String, roles: MutableList<Roles>) {
+    constructor(id: Long, username: String, login: String, password: String, roles: MutableSet<Roles>) {
         this.id = id
         this.username = username
         this.nickname = login
@@ -41,7 +42,7 @@ class User : UserDetails {
         this.roles = roles
     }
 
-    constructor(roles: MutableList<Roles>) {
+    constructor(roles: MutableSet<Roles>) {
         this.roles = roles
     }
 
@@ -57,7 +58,7 @@ class User : UserDetails {
     }
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return roles.toMutableList()
+        return roles
     }
 
     override fun isEnabled(): Boolean = true

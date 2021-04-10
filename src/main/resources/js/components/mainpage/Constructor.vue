@@ -31,7 +31,7 @@
             <v-card-title style="margin-top: -55px; margin-bottom: -25px">
               <v-checkbox v-model="loginRequired">
                 <template v-slot:label>
-                  <span style="color:black;">Необходима авторизация</span>
+                  <span style="color:black;">Необходима аутентификация</span>
                 </template>
               </v-checkbox>
             </v-card-title>
