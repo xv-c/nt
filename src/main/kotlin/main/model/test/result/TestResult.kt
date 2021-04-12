@@ -15,7 +15,7 @@ class TestResult {
 
     @ManyToOne
     @JsonView(Views.ResultViews.ResultComplete::class)
-    var test: Test? = null
+    lateinit var test: Test
 
     @ManyToOne
     @JsonView(Views.Minimal::class)
@@ -23,5 +23,5 @@ class TestResult {
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(Views.Minimal::class)
-    var answers: MutableList<TestResultAnswer>? = null
+    lateinit var answers: MutableList<TestResultAnswer>
 }

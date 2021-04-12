@@ -52,6 +52,7 @@ class SecurityCfg(
 
                 resp.flushBuffer()
             }
+
             .and()
 
             .logout().logoutSuccessUrl("/")

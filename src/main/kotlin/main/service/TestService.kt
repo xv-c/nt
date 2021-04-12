@@ -49,23 +49,12 @@ class TestService(var userRepo: UserRepo, var testRepo: TestRepo, var testQuesti
     }
 
     fun save(name: String, description: String, loginRequired: Boolean, validQuestions: ArrayList<TestQuestion>, user: User): Test {
-        val questions = ArrayList<TestQuestion>()
-        validQuestions.forEach {
-            val variants = ArrayList<TestAnswerVariant>()
-            if (it.type != TestQuestion.QuestionType.TEXT) {
-                it.variants!!.forEach { variant ->
-                    variants.add(testAnswerVariantRepo.save(variant))
-                }
-                it.variants = variants
-            }
-        }
-
         val test = Test()
         test.name = name
         test.loginRequired = loginRequired
         test.description = description
         test.creator = user
-        test.questions = questions
+        test.questions = validQuestions
         test.creationDate = Date(Calendar.getInstance().timeInMillis)
 
         while (true) {

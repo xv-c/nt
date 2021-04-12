@@ -3,30 +3,23 @@
     <v-dialog v-if="selectedItem" v-model="showDialog" width="300">
       <v-color-picker v-model="selectedItem.color"/>
     </v-dialog>
-    <v-card width="850" tile>
-      <v-card-title>
-        <v-col style="margin-top: -10px" cols="4">
-          <v-combobox single-line dense solo v-model="selectedChart"
-                      :items="['Кольцевая диаграмма', 'Круговая диаграмма', 'Столбчатая диаграмма']">
-          </v-combobox>
-        </v-col>
-        <v-spacer/>
-        <v-col style="margin-top: -31px" cols="2">
-          <v-btn text @click="recolor()">
-            перекрасить
-          </v-btn>
-        </v-col>
-        <v-col style="margin-top: -31px" cols="2">
-          <v-btn text @click="saveImg()">
-            скачать
-          </v-btn>
-        </v-col>
 
+    <v-card class="ma-4 mt-0" outlined>
+      <v-card-title>
+        <v-combobox
+            v-model="selectedChart"
+            :items="['Кольцевая диаграмма', 'Круговая диаграмма', 'Столбчатая диаграмма']"
+            single-line dense solo hide-details
+        />
+        <v-spacer/>
+        <v-btn text @click="recolor()">
+          перекрасить
+        </v-btn>
       </v-card-title>
 
-      <v-divider style="margin-top: -40px"/>
+      <v-divider/>
 
-      <v-card-text :id="`chart-${id}`" style="margin-top: -10px">
+      <v-card-text :id="`chart-${id}`">
         <v-row>
           <svg :width="325"
                :height="animatedChartData.length*30+40">

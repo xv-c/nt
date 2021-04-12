@@ -17,7 +17,7 @@ class TestQuestion {
     @JsonView(Views.Minimal::class)
     var type: QuestionType = QuestionType.ONE
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(Views.Minimal::class)
     var variants: MutableList<TestAnswerVariant>? = null
 

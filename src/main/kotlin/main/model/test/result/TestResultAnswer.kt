@@ -15,12 +15,12 @@ class TestResultAnswer {
 
     @ManyToOne
     @JsonView(Views.Minimal::class)
-    var question: TestQuestion? = null
+    lateinit var question: TestQuestion
 
     @JsonView(Views.Minimal::class)
     var answer: String? = null
 
-    @ManyToMany
+    @ManyToMany(cascade = [CascadeType.ALL])
     @JsonView(Views.Minimal::class)
     var answers: MutableList<TestAnswerVariant>? = null
 }

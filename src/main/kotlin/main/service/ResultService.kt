@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ResultService(
-        val testRepo: TestRepo,
-        val testResultRepo: TestResultRepo,
-        val testAnswerVariantRepo: TestAnswerVariantRepo,
-        val testResultAnswerRepo: TestResultAnswerRepo
+    val testResultRepo: TestResultRepo
 ) {
 
     fun getResults(test: Test): List<TestResult> {
@@ -34,32 +31,29 @@ class ResultService(
 
         testResult.answers = mutableListOf()
         for (index in 0 until answersList.size) {
+            val answer = TestResultAnswer()
+            val mapped = answersList[index] as Map<*, *>
             when (test.questions[index].type) {
                 TestQuestion.QuestionType.MULTI -> {
-                    val answerParsed = (answersList[index] as Map<*, *>)["value"] as ArrayList<Int>
-                    val answer = TestResultAnswer()
+                    val answerParsed = mapped["value"] as ArrayList<Int>
                     answer.question = test.questions[index]
                     answer.answers = mutableListOf()
                     for (answerVariant in answerParsed) {
                         answer.answers!!.add(test.questions[index].variants!![answerVariant])
                     }
-                    testResult.answers!!.add(testResultAnswerRepo.save(answer))
                 }
                 TestQuestion.QuestionType.ONE -> {
-                    val answerParsed = (answersList[index] as Map<*, *>)["value"] as Int
-                    val answer = TestResultAnswer()
+                    val answerParsed = mapped["value"] as Int
                     answer.question = test.questions[index]
                     answer.answers = mutableListOf()
                     answer.answers!!.add(test.questions[index].variants!![answerParsed])
-                    testResult.answers!!.add(testResultAnswerRepo.save(answer))
                 }
                 TestQuestion.QuestionType.TEXT -> {
-                    val answer = TestResultAnswer()
                     answer.question = test.questions[index]
-                    answer.answer = (answersList[index] as Map<*, *>)["value"] as String
-                    testResult.answers!!.add(testResultAnswerRepo.save(answer))
+                    answer.answer = mapped["value"] as String
                 }
             }
+            testResult.answers.add(answer)
         }
 
         if (test.loginRequired)

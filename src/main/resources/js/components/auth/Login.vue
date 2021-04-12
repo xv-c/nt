@@ -43,16 +43,18 @@ export default {
   },
   methods: {
     ...mapActions('app', ["showMessage"]),
-    async login() {
+    login() {
       let formData = new FormData();
       formData.append("username", this.username)
       formData.append("password", this.password)
 
-      let resp = await api.post("/api/login", formData)
-      if (!resp.success)
-        this.showMessage(resp.message)
-      else
-        this.$router.go()
+      api.post("/api/login", formData)
+          .then(data => {
+            if (!data.success)
+              this.showMessage(data.message)
+            else
+              this.$router.go()
+          })
     }
   }
 }
