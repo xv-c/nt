@@ -17,24 +17,43 @@ class ResultController(private val testService: TestService, val resultService: 
     @GetMapping("{key}")
     @JsonView(Views.Minimal::class)
     fun getResults(
-            @PathVariable key: String,
-            @AuthenticationPrincipal user: User?):
-            ResponseEntity<*> {
+        @PathVariable key: String,
+        @AuthenticationPrincipal user: User?
+    ): ResponseEntity<*> {
 
         val test = testService.getTestForCreator(user, key)
         val results = resultService.getResults(test)
         return ResponseFactory.ok(
-                arrayOf("test", "results"),
-                arrayOf(test, results))
+            arrayOf("test", "results"),
+            arrayOf(test, results)
+        )
     }
+
+    /*@GetMapping("/status/{key}")
+    @JsonView(Views.Minimal::class)
+    fun getAnalysisStatus(
+        @PathVariable key: String
+    ) : ResponseEntity<*> {
+        return ResponseFactory.ok()
+    }*/
+
+    /*@PostMapping("{key}")
+    @JsonView
+    fun startAnalysis(
+        @PathVariable key: String
+    ): ResponseEntity<*> {
+        val test = testService.getTest(key)
+        resultService.startAnalysis(test)
+        return ResponseFactory.ok()
+    }*/
 
     @PostMapping("{key}")
     @JsonView(Views.Minimal::class)
     fun postResult(
-            @PathVariable key: String,
-            @RequestParam("result") resultJson: String,
-            @AuthenticationPrincipal user: User?):
-            ResponseEntity<*> {
+        @PathVariable key: String,
+        @RequestParam("result") resultJson: String,
+        @AuthenticationPrincipal user: User?
+    ): ResponseEntity<*> {
         val test = testService.getTestForRespondent(user, key)
         val testResult = resultService.parseResult(resultJson, test, user)
         val result = resultService.save(testResult)

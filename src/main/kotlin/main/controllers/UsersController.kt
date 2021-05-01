@@ -23,6 +23,6 @@ class UsersController(private var userService: UserService) {
             @RequestParam password: String):
             ResponseEntity<*> {
         val user = userService.saveUser(username, nickname, password)
-        return ResponseFactory.build("user", user, true, HttpStatus.OK)
+        return ResponseFactory.ok("user", user)
     }
 }

@@ -29,8 +29,8 @@ class User : UserDetails {
     @ElementCollection(targetClass = Roles::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(value = EnumType.STRING)
-    @JsonView(Views.Minimal::class)
-    var roles: MutableSet<Roles> = mutableSetOf<Roles>()
+    @JsonView(Views.UserViews.UserComplete::class)
+    var roles: MutableSet<Roles> = mutableSetOf()
 
     constructor()
 
