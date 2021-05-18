@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.ResponseBody
 @ResponseBody
 class ExceptionsHandler {
 
-    @ExceptionHandler(Throwable::class)
-    fun handleAll(e: Throwable) : ResponseEntity<*>{
+    @ExceptionHandler(Exception::class)
+    fun handleAll(e: Exception) : ResponseEntity<*>{
+        e.printStackTrace()
         return ResponseFactory.fail(e.message)
     }
 
     @ExceptionHandler(RestException::class)
     fun handleServiceException(e: RestException): ResponseEntity<*> {
+        e.printStackTrace()
         return ResponseFactory.fail(e.message)
     }
 }

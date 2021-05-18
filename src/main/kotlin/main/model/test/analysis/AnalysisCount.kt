@@ -1,4 +1,4 @@
-package main.model.test.result
+package main.model.test.analysis
 
 import com.fasterxml.jackson.annotation.JsonView
 import main.model.test.test.TestAnswerVariant
@@ -6,24 +6,22 @@ import main.model.test.test.TestQuestion
 import main.util.Views
 import javax.persistence.*
 
+
 @Entity
-class TestResultAnswer {
+class AnalysisCount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.Minimal::class)
     var id: Long = 0
 
+    @JsonView(Views.Minimal::class)
+    var count = 0L
+
     @ManyToOne
     @JsonView(Views.Minimal::class)
-    lateinit var question: TestQuestion
+    lateinit var forQuestion: TestQuestion
 
+    @ManyToOne
     @JsonView(Views.Minimal::class)
-    var tonality = false
-
-    @JsonView(Views.Minimal::class)
-    var answer: String? = null
-
-    @ManyToMany
-    @JsonView(Views.Minimal::class)
-    var answers: MutableList<TestAnswerVariant>? = null
+    lateinit var forAnswer: TestAnswerVariant
 }

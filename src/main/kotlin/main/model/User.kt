@@ -13,7 +13,7 @@ import kotlin.collections.HashSet
 class User : UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.Minimal::class)
     var id: Long = 0
 
@@ -29,7 +29,7 @@ class User : UserDetails {
     @ElementCollection(targetClass = Roles::class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = [JoinColumn(name = "user_id")])
     @Enumerated(value = EnumType.STRING)
-    @JsonView(Views.UserViews.UserComplete::class)
+    @JsonView(UserComplete::class)
     var roles: MutableSet<Roles> = mutableSetOf()
 
     constructor()
@@ -63,11 +63,11 @@ class User : UserDetails {
 
     override fun isEnabled(): Boolean = true
 
-    override fun getUsername(): String? {
+    override fun getUsername(): String {
         return username
     }
 
-    override fun getPassword(): String? {
+    override fun getPassword(): String {
         return password
     }
 

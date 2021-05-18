@@ -57,7 +57,7 @@
                             <v-icon v-else>content_copy</v-icon>
                         </v-btn>
 
-                        <v-btn color="blue" outlined>
+                        <v-btn @click="deleteTest(item)" color="blue" outlined>
                             <span v-if="$vuetify.breakpoint.lgAndUp">удалить</span>
                             <v-icon v-else>delete</v-icon>
                         </v-btn>
@@ -76,8 +76,9 @@
 import axios from 'axios'
 import {mapActions, mapState} from "vuex"
 import LoadingMask from "../../util/LoadingMask.vue"
-import Result from "./Result.vue";
+import Result from "./result/Result.vue";
 import api from "../../../use/api";
+import endpoints from "../../../use/endpoints";
 
 export default {
     components: {Result, LoadingMask},
@@ -102,38 +103,45 @@ export default {
     },
     methods: {
         ...mapActions("app", ["showMessage", "openAuthForm"]),
+        deleteTest(item) {
+            api.delete(endpoints.tests + item.key)
+                .then(data => {
+                    if (data.success) {
+                        this.showMessage("Тест успешно удален")
+                        this.loadData()
+                    } else {
+                        this.showMessage(data.message)
+                    }
+                })
+        },
         async loadData() {
             let vue = this
             let newTests = []
 
             this.maskModel = true
-            setTimeout(() => {
-                api.get("/api/tests")
-                    .then(data => {
-                        if (data.success) {
-                            let tests = data.data.tests
-                            console.log("tests")
-                            console.log(data)
-                            for (let i = 0; i < tests.length; i++) {
-                                let splitted = tests[i].creationDate.split('-')
-                                let validDay = splitted[2]
-                                if (validDay.toString().length === 1)
-                                    validDay = `0${validDay}`
-                                let validMonth = splitted[1]
-                                if (validMonth.toString().length === 1)
-                                    validMonth = `0${validMonth}`
-                                tests[i].creationDate = `${validDay}.${validMonth}.${splitted[0]}`
-                                newTests.push(tests[i])
-                            }
-                        } else {
-                            vue.showMessage(data.message)
+            api.get(endpoints.tests)
+                .then(data => {
+                    if (data.success) {
+                        let tests = data.data.tests
+                        for (let i = 0; i < tests.length; i++) {
+                            let splitted = tests[i].creationDate.split('-')
+                            let validDay = splitted[2]
+                            if (validDay.toString().length === 1)
+                                validDay = `0${validDay}`
+                            let validMonth = splitted[1]
+                            if (validMonth.toString().length === 1)
+                                validMonth = `0${validMonth}`
+                            tests[i].creationDate = `${validDay}.${validMonth}.${splitted[0]}`
+                            newTests.push(tests[i])
                         }
-                    })
-                    .finally(() => {
-                        vue.tests = newTests
-                        vue.maskModel = false
-                    })
-            }, 1000)
+                    } else {
+                        vue.showMessage(data.message)
+                    }
+                })
+                .finally(() => {
+                    vue.tests = newTests
+                    vue.maskModel = false
+                })
         },
         sendKeyToBuffer(key) {
             let el = document.createElement('textarea')

@@ -2,7 +2,9 @@ package main.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
 import main.model.User
+import main.model.test.test.Test
 import main.service.TestService
+import main.util.Endpoints
 import main.util.ResponseFactory
 import main.util.Views
 import org.springframework.http.ResponseEntity
@@ -10,13 +12,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/tests")
+@RequestMapping(Endpoints.TESTS)
 class TestController(private var testService: TestService) {
 
     @GetMapping
     @JsonView(Views.Minimal::class)
     fun getList(
-            @AuthenticationPrincipal user: User):
+        @AuthenticationPrincipal user: User
+    ):
             ResponseEntity<*> {
         return ResponseFactory.ok("tests", testService.getUserTests(user))
     }
@@ -24,37 +27,29 @@ class TestController(private var testService: TestService) {
     @GetMapping("{key}")
     @JsonView(Views.Minimal::class)
     fun getOne(
-            @AuthenticationPrincipal user: User?,
-            @PathVariable key: String):
-            ResponseEntity<*> {
+        @AuthenticationPrincipal user: User?,
+        @PathVariable key: String
+    ): ResponseEntity<*> {
         return ResponseFactory.ok("test", testService.getTestForRespondent(user, key))
     }
 
     @PostMapping
     @JsonView(Views.Minimal::class)
-    fun createTest(
-            @RequestParam(name = "questions") testQuestionsJson: String,
-            @RequestParam(name = "name") name: String,
-            @RequestParam(name = "loginRequired") loginRequired: Boolean,
-            @RequestParam(name = "description") description: String,
-            @AuthenticationPrincipal user: User)
-            : ResponseEntity<*> {
-        if (name.isEmpty() || name.length > 50)
-            return ResponseFactory.fail("Название формы не может быть пустым и не может превышать длину в 50 символов")
-        if (description.isEmpty() || description.length > 200)
-            return ResponseFactory.fail("Описание формы не может быть пустым и не может превышать длину в 200 символов")
-        val validQuestions = testService.parseQuestions(testQuestionsJson)
-        val result = testService.save(name, description, loginRequired, validQuestions, user)
-
-        return ResponseFactory.ok("test", result)
+    fun create(
+        @RequestBody test: Test,
+        @AuthenticationPrincipal user: User
+    ): ResponseEntity<*> {
+        test.creator = user
+        return ResponseFactory.ok("test", testService.create(test))
     }
 
     @DeleteMapping("{key}")
     @JsonView(Views.Minimal::class)
-    fun removeTest(
-            @AuthenticationPrincipal user: User,
-            @PathVariable key: String)
+    fun delete(
+        @AuthenticationPrincipal user: User,
+        @PathVariable key: String
+    )
             : ResponseEntity<*> {
-        return ResponseFactory.ok("testId", testService.remove(user, key))
+        return ResponseFactory.ok("testId", testService.delete(user, key))
     }
 }

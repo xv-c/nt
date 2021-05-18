@@ -31,6 +31,7 @@
 <script>
 import {mapActions} from "vuex"
 import api from "../../use/api"
+import endpoints from "../../use/endpoints";
 
 export default {
   components: {},
@@ -48,7 +49,7 @@ export default {
       formData.append("username", this.username)
       formData.append("password", this.password)
 
-      api.post("/api/login", formData)
+      api.post(endpoints.login, formData)
           .then(data => {
             if (!data.success)
               this.showMessage(data.message)

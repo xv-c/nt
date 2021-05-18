@@ -114,6 +114,7 @@
 <script>
 import {mapActions} from "vuex";
 import api from "../../../use/api";
+import endpoints from "../../../use/endpoints";
 
 export default {
   data() {
@@ -180,7 +181,7 @@ export default {
       let body = new FormData()
       body.append("result", JSON.stringify(data))
 
-      api.post(`/api/results/${this.$route.query.testKey}`, body)
+      api.post(`${endpoints.results}${this.$route.query.testKey}`, body)
           .then(data => {
             if (data.success) {
               this.showMessage("Ваш ответ успешно записан")
@@ -192,7 +193,7 @@ export default {
     }
   },
   created() {
-    api.get(`/api/tests/${this.$route.query.testKey}`)
+    api.get(`${endpoints.tests}${this.$route.query.testKey}`)
         .then(data => {
           if (data.success) {
             let test = data.data.test

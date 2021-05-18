@@ -1,29 +1,26 @@
 package main.service
 
-import kotlinx.coroutines.*
 import main.exceptions.RestException
 import main.model.User
-import main.model.test.result.TestResult
-import main.model.test.result.TestResultAnswer
+import main.model.test.analysis.AnalysisCount
+import main.model.test.analysis.AnalysisResult
+import main.model.test.analysis.AnalysisStat
+import main.model.test.result.*
 import main.model.test.test.Test
 import main.model.test.test.TestQuestion
-import main.repo.StateRepo
+import main.repo.TestRepo
 import main.repo.TestResultRepo
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.json.JsonParserFactory
-import org.springframework.http.HttpEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.postForEntity
-
-val flaskUrl = "http://localhost:5000/"
 
 @Service
-class ResultService(
-    val testResultRepo: TestResultRepo,
-    val stateRepo: StateRepo
+class TestResultService(
+    val testResultRepo: TestResultRepo
 ) {
 
-    fun getResults(test: Test): List<TestResult> {
+    fun get(test: Test): List<TestResult> {
         return testResultRepo.findByTest(test)
     }
 
@@ -72,28 +69,16 @@ class ResultService(
         return testResultRepo.save(testResult)
     }
 
-    fun analyseText(test: Test) {
-       /* GlobalScope.launch {
-            getResults(test)
-                .forEach {
-                    it.answers.filterIndexed { index, _ ->
-                        test.questions[index].type == TestQuestion.QuestionType.TEXT
-                    }
-                        .forEach {
-                        }
-                }
-        }*/
+    fun isVisited(user: User, test: Test): Boolean {
+        return testResultRepo.findByRespondentAndTest(user, test) != null
     }
 
-    fun analyseSelects() {
-    }
-
-    fun startAnalysis(test: Test) {
-        val state = stateRepo.findByTest(test)
-        state.selectState = false
-        state.textState = false
-        stateRepo.save(state)
-        analyseText(test)
-        analyseSelects()
+    fun delete(result: TestResult): Long {
+        val fromDb = testResultRepo.findByIdOrNull(result.id)
+        if (fromDb != null) {
+            testResultRepo.delete(fromDb)
+            return fromDb.id
+        }
+        throw RestException("Не удалось найти результат с ID <${result.id}>")
     }
 }

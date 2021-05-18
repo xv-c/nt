@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import main.exceptions.ExceptionsHandler
 import main.exceptions.RestException
 import main.service.UserService
+import main.util.Endpoints
 import main.util.ResponseFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.authentication.AuthenticationFailureHandler
+import kotlin.math.log
 
 
 @Configuration
@@ -32,32 +35,44 @@ class SecurityCfg(
 
             .and()
 
-            .formLogin()
-            .loginPage("/api/login")
-            .successHandler { _, resp, _ ->
-                resp.status = HttpStatus.OK.value()
-                resp.contentType = "application/json;charset=UTF-8"
+            .formLogin { login ->
+                login
+                    .loginPage(Endpoints.LOGIN)
 
-                val body = ResponseFactory.ok().body
-                resp.writer.write(ObjectMapper().writeValueAsString(body))
+                    .failureHandler { _, resp, _ ->
+                        resp.status = HttpStatus.BAD_REQUEST.value()
+                        resp.contentType = "application/json;charset=UTF-8"
 
-                resp.flushBuffer()
+                        val body =
+                            resolver.handleServiceException(RestException("Некорректная почта и/или пароль")).body
+                        resp.writer.write(ObjectMapper().writeValueAsString(body))
+
+                        resp.flushBuffer()
+                    }
+
+                    .successHandler { _, resp, _ ->
+                        resp.status = HttpStatus.OK.value()
+                        resp.contentType = "application/json;charset=UTF-8"
+
+                        val body = ResponseFactory.ok().body
+                        resp.writer.write(ObjectMapper().writeValueAsString(body))
+
+                        resp.flushBuffer()
+                    }
+
+
             }
-            .failureHandler{ _, resp, _ ->
-                resp.status = HttpStatus.BAD_REQUEST.value()
-                resp.contentType = "application/json;charset=UTF-8"
 
-                val body = resolver.handleServiceException(RestException("Некорректная почта и/или пароль")).body
-                resp.writer.write(ObjectMapper().writeValueAsString(body))
-
-                resp.flushBuffer()
+            .logout { logout ->
+                logout
+                    .logoutUrl(Endpoints.LOGOUT)
+                    .logoutSuccessUrl("/")
             }
+
+            .oauth2Login()
 
             .and()
 
-            .logout().logoutSuccessUrl("/")
-
-            .and()
             .csrf().disable()
     }
 

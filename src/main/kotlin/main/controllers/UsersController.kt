@@ -1,28 +1,33 @@
 package main.controllers
 
 import com.fasterxml.jackson.annotation.JsonView
+import main.model.User
 import main.service.UserService
+import main.util.Endpoints
 import main.util.ResponseFactory
 import main.util.Views
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(Endpoints.USERS)
 class UsersController(private var userService: UserService) {
+
+    @PutMapping
+    @JsonView
+    fun editUser(
+        @AuthenticationPrincipal user: User
+    ) {
+    }
 
     @PostMapping
     @JsonView(Views.Minimal::class)
     fun registerUser(
-            @RequestParam username: String,
-            @RequestParam nickname: String,
-            @RequestParam password: String):
-            ResponseEntity<*> {
-        val user = userService.saveUser(username, nickname, password)
-        return ResponseFactory.ok("user", user)
+        @RequestParam username: String,
+        @RequestParam nickname: String,
+        @RequestParam password: String
+    ): ResponseEntity<*> {
+        return ResponseFactory.ok("user", userService.create(username, nickname, password))
     }
 }

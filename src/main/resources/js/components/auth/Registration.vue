@@ -71,6 +71,7 @@
 <script>
 import api from "../../use/api";
 import {mapActions} from "vuex"
+import endpoints from "../../use/endpoints";
 
 export default {
   components: {},
@@ -109,7 +110,7 @@ export default {
       data.append("username", this.username)
       data.append("password", this.password)
 
-      api.post("/api/users", data)
+      api.post(endpoints.users, data)
           .then(data => {
             if (data.success)
               vue.showMessage("Пользователь успешно зарегистрирован")

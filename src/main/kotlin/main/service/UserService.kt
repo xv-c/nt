@@ -3,6 +3,7 @@ package main.service
 import main.exceptions.RestException
 import main.model.User
 import main.repo.UserRepo
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -10,6 +11,28 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) : UserDetailsService {
+
+    fun create(username: String, nickname: String, password: String): User {
+        val errors = isValid(username, nickname, password)
+        if (errors.isNotEmpty())
+            throw RestException(errors)
+
+        var user = userRepo.findByUsername(username.toLowerCase())
+
+        if (user != null)
+            throw RestException("Пользователь с такой почтой уже зарегистрирован")
+
+        user = User()
+        user.username = username.toLowerCase()
+        user.nickname = nickname
+        user.password = passwordEncoder.encode(password)
+        user.roles.add(User.Roles.USER)
+        return userRepo.save(user)
+    }
+
+    fun get(id: Long): User {
+        return userRepo.findByIdOrNull(id) ?: throw RestException("Пользователь с ID <${id}> не найден")
+    }
 
     override fun loadUserByUsername(userName: String): User {
         return userRepo.findByUsername(userName) ?: throw UsernameNotFoundException("Пользователь $userName не найден")
@@ -39,23 +62,5 @@ class UserService(val userRepo: UserRepo, val passwordEncoder: PasswordEncoder) 
             errors += "Пароль должен содержать не более, чем 64 символа\r\n"
 
         return errors
-    }
-
-    fun saveUser(username: String, nickname: String, password: String): User {
-        val errors = isValid(username, nickname, password)
-        if (errors.isNotEmpty())
-            throw RestException(errors)
-
-        var user = userRepo.findByUsername(username.toLowerCase())
-
-        if (user != null)
-            throw RestException("Пользователь с такой почтой уже зарегистрирован")
-
-        user = User()
-        user.username = username.toLowerCase()
-        user.nickname = nickname
-        user.password = passwordEncoder.encode(password)
-        user.roles.add(User.Roles.USER)
-        return userRepo.save(user)
     }
 }

@@ -7,7 +7,7 @@ import javax.persistence.*
 @Entity
 class TestQuestion {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(Views.Minimal::class)
     var id: Long = 0
 
