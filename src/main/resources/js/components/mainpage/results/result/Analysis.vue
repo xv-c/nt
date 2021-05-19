@@ -17,7 +17,7 @@
       </v-card-title>
     </div>
 
-    <v-tabs hide-slider grow v-model="activeTab">
+    <v-tabs v-else hide-slider grow v-model="activeTab">
       <v-tab>Нетекстовые ответы</v-tab>
       <v-tab>Текстовые ответы</v-tab>
 
@@ -141,14 +141,29 @@ export default {
         pres.writeFile('presentation');
       })
     },
-    getItemsFor(index) {
+    getItemsFor(textIndex) {
+      let index = -1
+      let i = 0
+      while (index !== textIndex) {
+        if (this.test.questions[i].type === 'TEXT')
+          index++
+        if (index !== textIndex)
+          i++
+      }
+      index = i
       let result = []
 
       for (let j = 0; j < this.results.length; j++) {
-
         let tonality = this.results[j].answers[index].tonality ? 'Позитивная' : 'Негативная'
+
+        console.log("this.results[j]")
+        console.log(this.results[j])
+        console.log("this.results[j].answers[index]")
+        console.log(this.results[j].answers[index])
         result.push({answer: this.results[j].answers[index].answer, tonality: tonality})
       }
+      console.log("result")
+      console.log(result)
       return result
     },
     loadAnalysis() {
