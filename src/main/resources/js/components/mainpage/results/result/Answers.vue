@@ -42,9 +42,10 @@
                         <v-card-title>
                             <v-text-field
                                 v-model="data.search"
-                                placeholder="Поиск по таблице"
-                                outlined dense single-line
-                                hide-details
+                                placeholder="Поиск в таблице"
+                                outlined
+                                dense single-line hide-details
+                                prepend-inner-icon="search"
                             />
                         </v-card-title>
                     </template>
