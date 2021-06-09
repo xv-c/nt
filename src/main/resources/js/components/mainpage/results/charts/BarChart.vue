@@ -1,5 +1,5 @@
 <template>
-  <svg :width="chartWidth" :height="chartData.length*35">
+  <svg :width="chartWidth" :height="chartData.length*35 + 5">
     <g v-for="(item, i) in chartData">
       <rect :x="5"
             :y="35*i+5"
@@ -46,7 +46,7 @@ export default {
       }
       if (maxVal === 0)
         return 0;
-      return (this.chartWidth - 100) / maxVal * item.value;
+      return (this.chartWidth - 120) / maxVal * item.value;
     },
   },
   computed: {}

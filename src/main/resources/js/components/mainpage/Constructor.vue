@@ -6,7 +6,7 @@
             </b>
         </p>
 
-        <v-row v-if="profile" justify="center">
+        <v-row v-if="profile" justify="center" class="ma-0 pa-0">
             <v-sheet :rounded="!isTile" :tile="isTile" :flat="isTile" :width="cardWidth" color="#ADD8E6">
                 <v-card class="ma-4">
                     <v-card-subtitle>
@@ -45,17 +45,36 @@
                                 <span style="color:black;">Необходима аутентификация</span>
                             </template>
                         </v-checkbox>
+                        <v-checkbox v-model="form.public" class="mt-0" hide-details>
+                            <template v-slot:label>
+                                <span style="color:black;">Публичный тест</span>
+                            </template>
+                        </v-checkbox>
                     </v-card-subtitle>
                 </v-card>
 
                 <v-card
                     v-for="(question, questionIndex) in form.questions"
-                    :key="undefined"
+                    :key="form.qId"
                     class="ma-4"
                 >
                     <v-card-title class="pb-0">
                         <span style="color: #5AACC7">Вопрос #{{ questionIndex + 1 }}</span>
                         <v-spacer/>
+                        <v-btn
+                            v-if="questionIndex!==(form.questions.length - 1)"
+                            @click="downQuestion(questionIndex)"
+                            icon>
+                            <v-icon>expand_more</v-icon>
+                        </v-btn>
+
+                        <v-btn
+                            v-if="questionIndex!==0 && form.questions.length !== 1"
+                            @click="downQuestion(questionIndex-1)"
+                            icon>
+                            <v-icon>expand_less</v-icon>
+                        </v-btn>
+
                         <v-hover v-slot:default="{ hover }">
                             <v-btn @click="removeQuestion(questionIndex)" :disabled="form.questions.length===1" icon>
                                 <v-icon :color="hover ? 'red' : undefined">clear</v-icon>
@@ -126,19 +145,21 @@
                         </v-card>
                     </v-card-text>
                 </v-card>
-                <v-card-actions class="px-4 py-4">
-                    <v-btn :disabled="!isValid"
-                           @click="postTest()" color="blue" outlined>готово
-                    </v-btn>
-                    <v-spacer/>
-                    <v-btn @click="addQuestion()" color="blue" outlined>
-                        <span v-if="!isTile">добавить&nbsp;</span>
-                        <v-icon v-else>add</v-icon>
-                        вопрос
-                    </v-btn>
-                    <v-spacer/>
-                    <v-btn @click="clear()" color="blue" outlined>очистить</v-btn>
-                </v-card-actions>
+                <v-card class="ma-4">
+                    <v-card-actions class="px-4 py-4">
+                        <v-btn :disabled="!isValid"
+                               @click="postTest()" color="blue" outlined>готово
+                        </v-btn>
+                        <v-spacer/>
+                        <v-btn @click="addQuestion()" color="blue" outlined>
+                            <span v-if="!isTile">добавить&nbsp;</span>
+                            <v-icon v-else>add</v-icon>
+                            вопрос
+                        </v-btn>
+                        <v-spacer/>
+                        <v-btn @click="clear()" color="blue" outlined>очистить</v-btn>
+                    </v-card-actions>
+                </v-card>
             </v-sheet>
         </v-row>
     </v-container>
@@ -193,15 +214,27 @@ export default {
                 {text: 'Текстовый ответ', type: 'TEXT'}
             ],
             form: {
+                qId: 0,
                 name: 'Новая форма',
                 description: '',
                 questions: [],
-                loginRequired: false
+                loginRequired: false,
+                public: false
             }
         }
     },
     methods: {
         ...mapActions('app', ["openAuthForm", "showMessage"]),
+        downQuestion(index){
+            let x = index
+            let y = index + 1
+            let list = this.form.questions
+
+            let b = list[y];
+            list[y] = list[x];
+            list[x] = b;
+            this.form.qId++
+        },
         clear() {
             this.form.name = 'Новая форма'
             this.form.description = ''
@@ -224,7 +257,7 @@ export default {
                 question: '',
                 variants: []
             })
-
+            this.form.qId++
             this.addVariant(this.form.questions[this.form.questions.length - 1])
             this.addVariant(this.form.questions[this.form.questions.length - 1])
         },

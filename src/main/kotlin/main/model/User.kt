@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.util.*
 import javax.persistence.*
-import kotlin.collections.HashSet
 
 @Entity(name = "usr")
 class User : UserDetails {

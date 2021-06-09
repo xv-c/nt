@@ -23,8 +23,7 @@ class AnalysisService(
     private class FlaskResponse(val positive: Int)
 
     fun isPositive(sentence: String): Boolean {
-        val template = RestTemplate()
-        val response = template.postForEntity(
+        val response = RestTemplate().postForEntity(
             flaskUrl,
             HttpEntity<HashMap<String, String>>(hashMapOf("text" to sentence)),
             FlaskResponse::class.java
@@ -100,7 +99,7 @@ class AnalysisService(
 
     fun start(testKey: String) {
         var test = testService.get(testKey)
-        test.isAnalysing = true
+        test.analysing = true
         test = testService.save(test)
         val results = testResultService.get(test)
 
@@ -108,8 +107,8 @@ class AnalysisService(
         analyseSelects(test, results)
         analyseText(test, results)
 
-        test.isAnalysed = true
-        test.isAnalysing = false
+        test.analysed = true
+        test.analysing = false
         testService.save(test)
     }
 

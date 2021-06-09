@@ -19,21 +19,18 @@
 
             <v-divider/>
 
-            <v-card-text :id="`chart-${id}`">
-                <v-row>
+            <div :id="`chart-${id}`">
+                <v-card-title class="py-0">
+                    {{ getTruncated(title) }}
+                </v-card-title>
+                <v-row class="ma-0 pa-0">
                     <svg :width="325"
-                         :height="animatedChartData.length*30+40">
-                        <text font-weight="bold"
-                              :y="20"
-                              :x="35"
-                              style="fill: black; font-size: 20px">
-                            {{ title }}
-                        </text>
+                         :height="animatedChartData.length*30">
                         <g v-for="(item, index) in animatedChartData">
                             <text @mouseover="focusItem(item)"
                                   @mouseleave="resetColors()"
                                   font-weight="bold"
-                                  :y="index*30+4.2*5 + 30"
+                                  :y="index*30+4.2*5"
                                   :x="35"
                                   style="fill: black">
                                 {{ item.text }} ({{ item.value }} {{ getLocalizedText(item.value) }})
@@ -43,7 +40,7 @@
                                   @mouseleave="resetColors()"
                                   :height="25" :width="25"
                                   :x="5"
-                                  :y="index * 30 + 35"
+                                  :y="index*30+5"
                                   :style="'transform-origin: center; ' +
                                    'transform: scale('+animatedChartData[index].scale+', '+animatedChartData[index].scale+'); ' +
                                     'fill:'+getRgb(animatedChartData[index].color)+';' +
@@ -61,7 +58,7 @@
                                :is-ring="selectedChart==='Кольцевая диаграмма'"
                                :total-results="totalResults"/>
                 </v-row>
-            </v-card-text>
+            </div>
         </v-card>
     </div>
 </template>
@@ -70,6 +67,7 @@
 import html2canvas from "html2canvas"
 import BarChart from "./BarChart.vue"
 import PieChart from "./PieChart.vue"
+import util from "../../../../use/util";
 
 export default {
     components: {PieChart, BarChart},
@@ -130,6 +128,9 @@ export default {
                 }
             }
             this.resetColors()
+        },
+        getTruncated(text){
+            return util.truncate(text, 80)
         },
         handleMouseLeaveChild() {
             this.resetColors()

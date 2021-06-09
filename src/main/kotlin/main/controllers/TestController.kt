@@ -6,8 +6,8 @@ import main.model.test.test.Test
 import main.service.TestService
 import main.util.Endpoints
 import main.util.ResponseFactory
+import main.util.RestResponse
 import main.util.Views
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -15,21 +15,34 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping(Endpoints.TESTS)
 class TestController(private var testService: TestService) {
 
-    @GetMapping
+    @GetMapping("/user")
     @JsonView(Views.Minimal::class)
     fun getList(
         @AuthenticationPrincipal user: User
-    ):
-            ResponseEntity<*> {
+    ): RestResponse{
         return ResponseFactory.ok("tests", testService.getUserTests(user))
     }
 
-    @GetMapping("{key}")
+    @GetMapping("/public")
     @JsonView(Views.Minimal::class)
-    fun getOne(
+    fun listPublic(): RestResponse {
+        return ResponseFactory.ok("tests", testService.getLastPublic())
+    }
+
+    @GetMapping("/search/{name}")
+    @JsonView(Views.Minimal::class)
+    fun search(
+        @PathVariable name: String
+    ): RestResponse {
+        return ResponseFactory.ok("tests", testService.search(name))
+    }
+
+    @GetMapping("/key/{key}")
+    @JsonView(Views.Minimal::class)
+    fun get(
         @AuthenticationPrincipal user: User?,
         @PathVariable key: String
-    ): ResponseEntity<*> {
+    ): RestResponse {
         return ResponseFactory.ok("test", testService.getTestForRespondent(user, key))
     }
 
@@ -38,7 +51,7 @@ class TestController(private var testService: TestService) {
     fun create(
         @RequestBody test: Test,
         @AuthenticationPrincipal user: User
-    ): ResponseEntity<*> {
+    ): RestResponse {
         test.creator = user
         return ResponseFactory.ok("test", testService.create(test))
     }
@@ -48,8 +61,7 @@ class TestController(private var testService: TestService) {
     fun delete(
         @AuthenticationPrincipal user: User,
         @PathVariable key: String
-    )
-            : ResponseEntity<*> {
+    ): RestResponse {
         return ResponseFactory.ok("testId", testService.delete(user, key))
     }
 }

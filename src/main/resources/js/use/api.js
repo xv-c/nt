@@ -17,6 +17,14 @@ export default {
             return e.response.data
         }
     },
+    async put(url, data) {
+        try {
+            let resp = await axios.put(url, data)
+            return resp.data
+        } catch (e) {
+            return e.response.data
+        }
+    },
     async get(url) {
         try {
             let resp = await axios.get(url)

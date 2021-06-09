@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView
 import main.model.User
 import main.model.test.analysis.AnalysisResult
 import main.util.Views
-import java.sql.Date
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -24,7 +24,7 @@ class Test {
     lateinit var creator: User
 
     @JsonView(Views.Minimal::class)
-    lateinit var creationDate: Date
+    lateinit var creationDate: LocalDateTime
 
     @JsonView(Views.Minimal::class)
     lateinit var name : String
@@ -36,18 +36,21 @@ class Test {
     var loginRequired = false
 
     @JsonView(Views.Minimal::class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    var isAnalysed = false
-
-    @JsonView(Views.Minimal::class)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    var isAnalysing = false
-
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    var analysisResult : AnalysisResult? = null
+    var public = false
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonView(Views.Minimal::class)
     lateinit var questions: List<TestQuestion>
+
+    @JsonView(Views.Minimal::class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    var analysed = false
+
+    @JsonView(Views.Minimal::class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    var analysing = false
+
+    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    var analysisResult : AnalysisResult? = null
 }

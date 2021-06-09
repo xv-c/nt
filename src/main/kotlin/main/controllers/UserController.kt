@@ -5,20 +5,34 @@ import main.model.User
 import main.service.UserService
 import main.util.Endpoints
 import main.util.ResponseFactory
+import main.util.RestResponse
 import main.util.Views
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping(Endpoints.USERS)
-class UsersController(private var userService: UserService) {
+class UserController(private var userService: UserService) {
 
-    @PutMapping
-    @JsonView
-    fun editUser(
-        @AuthenticationPrincipal user: User
-    ) {
+    @PutMapping("/password")
+    @JsonView(Views.Minimal::class)
+    fun edit(
+        @AuthenticationPrincipal user: User,
+        password: String
+    ) : RestResponse {
+        userService.editPassword(user, password)
+        return ResponseFactory.ok()
+    }
+
+    @PutMapping("/profile")
+    @JsonView(Views.Minimal::class)
+    fun edit(
+        @AuthenticationPrincipal user: User,
+        username: String,
+        nickname: String
+    ) : RestResponse {
+        userService.editProfile(user, username, nickname)
+        return ResponseFactory.ok()
     }
 
     @PostMapping
@@ -27,7 +41,7 @@ class UsersController(private var userService: UserService) {
         @RequestParam username: String,
         @RequestParam nickname: String,
         @RequestParam password: String
-    ): ResponseEntity<*> {
+    ): RestResponse {
         return ResponseFactory.ok("user", userService.create(username, nickname, password))
     }
 }

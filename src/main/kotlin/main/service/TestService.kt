@@ -3,9 +3,10 @@ package main.service
 import main.exceptions.RestException
 import main.model.User
 import main.model.test.test.Test
-import main.repo.*
+import main.repo.TestRepo
 import org.springframework.stereotype.Service
-import java.sql.Date
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 @Service
@@ -52,7 +53,7 @@ class TestService(
     }
 
     fun create(test: Test): Test {
-        test.creationDate = Date(Calendar.getInstance().timeInMillis)
+        test.creationDate = LocalDateTime.now(ZoneId.of("Europe/Moscow"))
         while (true) {
             val key = UUID.randomUUID().toString().substring(0..17).toUpperCase()
             try {
@@ -76,5 +77,13 @@ class TestService(
             testRepo.delete(test)
             test.id
         }
+    }
+
+    fun getLastPublic(): List<Test> {
+        return testRepo.findTop10ByPublicTrueOrderByCreationDateDesc()
+    }
+
+    fun search(name: String): List<Test> {
+        return testRepo.findByNameLike(name)
     }
 }

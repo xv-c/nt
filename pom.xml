@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>11</java.version>
-		<kotlin.version>1.4.32</kotlin.version>
+		<kotlin.version>1.5.10</kotlin.version>
 	</properties>
 
 	<dependencies>
@@ -41,12 +41,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 			<version>2.3.3.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jetbrains.kotlinx</groupId>
-			<artifactId>kotlinx-coroutines-core</artifactId>
-			<version>1.4.3</version>
 		</dependency>
 
 		<dependency>

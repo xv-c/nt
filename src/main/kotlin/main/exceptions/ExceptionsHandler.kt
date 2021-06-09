@@ -13,12 +13,12 @@ class ExceptionsHandler {
     @ExceptionHandler(Exception::class)
     fun handleAll(e: Exception) : ResponseEntity<*>{
         e.printStackTrace()
-        return ResponseFactory.fail(e.message)
+        return ResponseFactory.fail(e.message!!)
     }
 
     @ExceptionHandler(RestException::class)
     fun handleServiceException(e: RestException): ResponseEntity<*> {
         e.printStackTrace()
-        return ResponseFactory.fail(e.message)
+        return ResponseFactory.fail(e.message!!)
     }
 }

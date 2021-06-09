@@ -18,7 +18,7 @@ class TestResultAnswer {
     lateinit var question: TestQuestion
 
     @JsonView(Views.Minimal::class)
-    var tonality = false
+    var tonality : Boolean? = null
 
     @JsonView(Views.Minimal::class)
     var answer: String? = null

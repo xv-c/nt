@@ -58,7 +58,9 @@
             </v-text-field>
         </v-card-text>
 
-        <v-divider/>
+        <v-row class="mx-4 py-4">
+            <v-divider/>
+        </v-row>
 
         <v-card-actions>
             <v-spacer/>
@@ -90,8 +92,7 @@ export default {
     },
     computed: {
         notValid() {
-            return this.confirmPassword.length === 0 || this.match !== ''
-                || this.password.length < 8 || this.password.length > 64
+            return this.password.length < 8 || this.password.length > 64 || this.match !== ''
                 || this.username.length === 0 || !this.validMail
                 || this.nickname.length < 5 || this.nickname.length > 20
         },
@@ -100,7 +101,7 @@ export default {
             return regex.test(this.username)
         },
         match() {
-            return this.confirmPassword.length > 0 && this.confirmPassword === this.password ? "" : "Пароли не совпадают"
+            return this.confirmPassword === this.password ? "" : "Пароли не совпадают"
         }
     },
     methods: {

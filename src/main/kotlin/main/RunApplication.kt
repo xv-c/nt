@@ -1,6 +1,7 @@
 package main
 
 import main.service.UserService
+import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
@@ -8,6 +9,5 @@ import org.springframework.boot.runApplication
 class RunApplication
 
 fun main(args: Array<String>) {
-	val ctx = runApplication<RunApplication>(*args)
-	val userService = ctx.getBean(UserService::class.java)
+	val ctx = SpringApplication.run(RunApplication::class.java, *args)
 }

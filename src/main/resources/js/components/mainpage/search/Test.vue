@@ -12,11 +12,21 @@
 
         <v-card class="ma-4">
           <v-card-title>
-            {{ test.name }}
-            <v-spacer/>
-            <span v-if="test.loginRequired" style="color: red; font-size: 12px">
-                                Это не анонимный опрос!
-                        </span>
+            <v-row align="top" class="ma-0 pa-0">
+              <v-col cols="auto" class="pa-0 ma-0">
+                {{ test.name }}
+              </v-col>
+              <v-spacer/>
+              <v-col cols="auto" class="pa-0 ma-0">
+              <span v-if="test.loginRequired" style="color: red; font-size: 12px">
+                Это не анонимный опрос!
+              </span>
+                <br v-if="test.loginRequired && test.public">
+                <span v-if="test.public" style="color: black; font-size: 12px">
+                Это публичный опрос
+              </span>
+              </v-col>
+            </v-row>
           </v-card-title>
           <v-card-subtitle>
             {{ test.description }}
@@ -26,7 +36,6 @@
         <v-card class="ma-4">
           <template
               v-for="(question, questionIndex) in test.questions"
-
           >
             <v-card-title class="pb-0">
               <span>{{ question.question }}</span>
@@ -193,7 +202,7 @@ export default {
     }
   },
   created() {
-    api.get(`${endpoints.tests}${this.$route.query.testKey}`)
+    api.get(`${endpoints.tests}key/${this.$route.query.testKey}`)
         .then(data => {
           if (data.success) {
             let test = data.data.test

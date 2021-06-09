@@ -19,7 +19,11 @@
                 @click:append="show = !show"
             />
         </v-card-text>
-        <v-divider/>
+
+        <v-row class="mx-4 py-4">
+            <v-divider/>
+        </v-row>
+
         <v-card-actions>
             <v-spacer/>
             <v-btn :ripple="false" @click="login" outlined color="blue">Войти</v-btn>

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonView
 import main.service.AnalysisService
 import main.util.Endpoints
 import main.util.ResponseFactory
+import main.util.RestResponse
 import main.util.Views
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,7 +17,7 @@ class AnalysisController(
     @JsonView(Views.Minimal::class)
     fun getAnalysis(
         @PathVariable key: String
-    ): ResponseEntity<*> {
+    ): RestResponse {
         return ResponseFactory.ok("analysis", analysisService.get(key))
     }
 
@@ -25,7 +25,7 @@ class AnalysisController(
     @JsonView(Views.Minimal::class)
     fun startAnalysis(
         @PathVariable key: String
-    ): ResponseEntity<*> {
+    ): RestResponse {
         analysisService.start(key)
         return ResponseFactory.ok()
     }

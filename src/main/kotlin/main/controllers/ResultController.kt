@@ -6,8 +6,8 @@ import main.service.TestResultService
 import main.service.TestService
 import main.util.Endpoints
 import main.util.ResponseFactory
+import main.util.RestResponse
 import main.util.Views
-import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 
@@ -20,7 +20,7 @@ class ResultController(private val testService: TestService, val testResultServi
     fun getResults(
         @PathVariable key: String,
         @AuthenticationPrincipal user: User?
-    ): ResponseEntity<*> {
+    ): RestResponse {
 
         val test = testService.getTestForCreator(user, key)
         val results = testResultService.get(test)
@@ -36,7 +36,7 @@ class ResultController(private val testService: TestService, val testResultServi
         @PathVariable key: String,
         @RequestParam("result") resultJson: String,
         @AuthenticationPrincipal user: User?
-    ): ResponseEntity<*> {
+    ): RestResponse {
         val test = testService.getTestForRespondent(user, key)
         val testResult = testResultService.parseResult(resultJson, test, user)
         val result = testResultService.save(testResult)

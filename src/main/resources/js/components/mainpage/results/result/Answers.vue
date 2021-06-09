@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <v-card flat tile width="876">
+        <v-divider/>
+
         <v-toolbar tile flat>
             <v-btn @click="getPptx()" text>
                 скачать как&nbsp;<b style="color: #D35230">pptx</b>
@@ -16,13 +18,13 @@
             v-for="(data, index) in chartsData"
         >
             <v-card-title class="pb-0">
+                <span style="color: #5AACC7">Вопрос #{{ index + 1 }}</span>
+            </v-card-title>
+
+            <v-card-title class="py-0">
                 <span style="color: grey">
                     {{ test.questions[index].question }}
                 </span>
-
-                <v-spacer/>
-
-                <span style="color: #5AACC7">Вопрос #{{ index + 1 }}</span>
             </v-card-title>
 
             <v-card
@@ -61,7 +63,7 @@
                 :title="test.questions[index].question"
             />
         </template>
-    </div>
+    </v-card>
 </template>
 
 <script>
