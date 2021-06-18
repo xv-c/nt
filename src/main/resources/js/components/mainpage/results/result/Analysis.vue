@@ -56,14 +56,9 @@
                     v-for="(data, index) in filteredNonTextChartsData"
                 >
                     <v-card-title class="pb-0">
-                        Пользователи, выбравшие&nbsp;<b style="color: #91CAD8">{{ data.answer }}</b>
+                        Пользователи, выбравшие&nbsp;<b style="color: #91CAD8">{{ data.answer }}</b>&nbsp;в вопросе&nbsp;<b style="color: #91CAD8">{{ data.question }}</b>, в вопросе&nbsp;<b style="color: #91CAD8">{{ data.childQuestion }}</b>&nbsp;выбирали:
                     </v-card-title>
-                    <v-card-title class="py-0">
-                        В вопросе&nbsp;<b style="color: #91CAD8">{{ data.question }}</b>
-                    </v-card-title>
-                    <v-card-title class="py-0">
-                        В вопросе&nbsp;<b style="color: #91CAD8">{{ data.childQuestion }}</b>&nbsp;выбирали:
-                    </v-card-title>
+
                     <chart
                         :chart-data="data.variants"
                         :title="''"
