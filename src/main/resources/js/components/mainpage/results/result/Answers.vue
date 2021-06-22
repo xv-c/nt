@@ -128,14 +128,14 @@ export default {
         },
         getCsv() {
             let getAnswer = (answer) => {
-                if (answer.question.type === "MULTI" || answer.question.type === "ONE")
+                if (answer.question.type === "MULTI" || answer.question.type === "ONE") {
                     return answer.answers.map(it => it.value).join(",")
-                else {
+                } else {
                     return answer.answer
                 }
             }
             let csvContent = "Пользователь;" + this.test.questions.map(it => it.question).join(";")
-            csvContent += "\n" + this.results.map(it => it.respondent === null ? 'null' : it.respondent.nickname + ";" + it.answers.map(answer => getAnswer(answer)).join(";")).join("\n")
+            csvContent += "\n" + this.results.map(it => (it.respondent === null ? 'null' : it.respondent.nickname) + ";" + it.answers.map(answer => getAnswer(answer)).join(";")).join("\n")
             let link = window.document.createElement("a");
             link.setAttribute("href", "data:text/csv;charset=utf-8,%EF%BB%BF" + encodeURI(csvContent));
             link.setAttribute("download", "report.csv");

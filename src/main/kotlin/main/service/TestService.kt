@@ -1,6 +1,6 @@
 package main.service
 
-import main.exceptions.RestException
+import main.exception.RestException
 import main.model.User
 import main.model.test.test.Test
 import main.repo.TestRepo
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+
 
 @Service
 class TestService(
@@ -21,7 +22,7 @@ class TestService(
     }
 
     fun get(key: String): Test {
-        return testRepo.findByKey(key.toUpperCase()) ?: throw RestException("Не удалось найти опрос с таким ключом")
+        return testRepo.findByKey(key.uppercase(Locale.getDefault())) ?: throw RestException("Не удалось найти опрос с таким ключом")
     }
 
     fun getTestForCreator(user: User?, key: String): Test {

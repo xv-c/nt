@@ -1,8 +1,8 @@
 package main.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import main.exceptions.ExceptionsHandler
-import main.exceptions.RestException
+import main.exception.ExceptionsHandler
+import main.exception.RestException
 import main.service.UserService
 import main.util.Endpoints
 import main.util.ResponseFactory
@@ -66,10 +66,6 @@ class SecurityCfg(
                     .logoutUrl(Endpoints.LOGOUT)
                     .logoutSuccessUrl("/")
             }
-
-            .oauth2Login()
-
-            .and()
 
             .csrf().disable()
     }

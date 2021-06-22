@@ -1,6 +1,6 @@
 package main.service
 
-import main.exceptions.RestException
+import main.exception.RestException
 import main.model.test.analysis.AnalysisCount
 import main.model.test.analysis.AnalysisResult
 import main.model.test.analysis.AnalysisStat

@@ -10,7 +10,7 @@
         </v-row>
 
         <v-row justify="center" v-if="test && results">
-            <v-card color="#ADD8E6" width="900">
+            <v-card color="#ADD8E6" width="905">
                 <v-card class="ma-4">
                     <v-card-title class="px-4 pb-0 pt-4">
                         <span style="color: grey">Название опроса:&nbsp;&nbsp;</span>{{ test.name }}

@@ -1,6 +1,6 @@
 package main.service
 
-import main.exceptions.RestException
+import main.exception.RestException
 import main.model.User
 import main.repo.UserRepo
 import org.springframework.data.repository.findByIdOrNull

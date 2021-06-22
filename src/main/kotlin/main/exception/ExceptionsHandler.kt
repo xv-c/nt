@@ -1,4 +1,4 @@
-package main.exceptions
+package main.exception
 
 import main.util.ResponseFactory
 import org.springframework.http.ResponseEntity

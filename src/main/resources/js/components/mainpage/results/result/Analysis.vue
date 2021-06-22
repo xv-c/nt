@@ -1,5 +1,5 @@
 <template>
-    <v-card flat tile width="876">
+    <v-card flat tile width="890">
         <v-divider/>
 
         <v-toolbar tile flat>
@@ -32,41 +32,55 @@
             <v-tab-item :transition="false" :reverse-transition="false">
                 <v-divider/>
 
+                <v-dialog width="800" v-model="filter.model">
+                    <v-data-table v-model="filterValues"
+                                  :items="getNonTextFiltered"
+                                  :headers="[{text: 'Вопрос', value: 'question'}]"
+                                  show-select/>
+                </v-dialog>
+
                 <v-card-title v-if="nonTextChartsData.length === 0">
                     Не удалось выявить зависимости
                 </v-card-title>
 
-                <div v-else>
-                    <v-toolbar tile flat>
-                        <v-btn @click="filter.model = true" text>
-                            <v-icon>filter_alt</v-icon>
-                            фильтрация
-                        </v-btn>
-                    </v-toolbar>
+                <v-expansion-panels tile accordion flat multiple focusable>
+                    <v-expansion-panel v-for="group in filteredNonTextChartsData" :key="undefined">
+                        <v-expansion-panel-header>
+                            <b>{{ group[0][0].question }}</b>
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                            <v-expansion-panels tile accordion flat multiple focusable
+                                                style="border: 2px solid limegreen">
+                                <v-expansion-panel v-for="subgroup in group" :key="undefined">
+                                    <v-expansion-panel-header>
+                                        <b>{{ subgroup[0].childQuestion }}</b>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        <v-divider/>
+                                        <div
+                                            v-for="(data, index) in subgroup"
+                                        >
+                                            <v-card-title class="pb-0">
+                                                Пользователи, выбравшие&nbsp;<b style="color: #91CAD8">{{
+                                                    data.answer
+                                                }}</b>&nbsp;выбирали:
+                                            </v-card-title>
 
-                    <v-dialog width="800" v-model="filter.model">
-                        <v-data-table v-model="filterValues"
-                                      :items="getNonTextFiltered"
-                                      :headers="[{text: 'Вопрос', value: 'question'}]"
-                                      show-select/>
-                    </v-dialog>
-                </div>
+                                            <chart
+                                                :chart-data="data.variants"
+                                                :title="''"
+                                                :total-results="data.total"
+                                                :id="index"
+                                                ref="nonTextChartsData"
+                                            />
+                                        </div>
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                        </v-expansion-panel-content>
+                    </v-expansion-panel>
+                </v-expansion-panels>
 
-                <div
-                    v-for="(data, index) in filteredNonTextChartsData"
-                >
-                    <v-card-title class="pb-0">
-                        Пользователи, выбравшие&nbsp;<b style="color: #91CAD8">{{ data.answer }}</b>&nbsp;в вопросе&nbsp;<b style="color: #91CAD8">{{ data.question }}</b>, в вопросе&nbsp;<b style="color: #91CAD8">{{ data.childQuestion }}</b>&nbsp;выбирали:
-                    </v-card-title>
-
-                    <chart
-                        :chart-data="data.variants"
-                        :title="''"
-                        :total-results="data.total"
-                        :id="index"
-                        ref="nonTextChartsData"
-                    />
-                </div>
             </v-tab-item>
             <v-tab-item :transition="false" :reverse-transition="false">
                 <v-divider/>
@@ -81,9 +95,7 @@
                     v-for="(data, index) in textChartsData"
                 >
                     <v-card-title class="pb-0">
-              <span style="color: grey">
-                {{ data.title }}
-              </span>
+                        <span style="color: grey">{{ data.title }}</span>
                         <v-spacer/>
                         <v-btn class="ma-4" color="blue" outlined @click="data.details = !data.details">
                             {{ data.details ? 'в виде диаграммы' : 'подробнее' }}
@@ -95,7 +107,7 @@
                         :title="data.title"
                         :total-results="results.length"
                         :id="index"
-                        ref="nonTextChartsData"
+                        ref="textChartsData"
                     />
                     <v-data-table
                         v-else
@@ -129,6 +141,7 @@
 </template>
 
 <script>
+import util from "../../../../use/util";
 import api from "../../../../use/api";
 import endpoints from "../../../../use/endpoints";
 import {mapActions} from "vuex";
@@ -145,18 +158,31 @@ export default {
     },
     watch: {
         filterValues(selected) {
+            if (!selected)
+                return
+
             let selectedHas = (value) => {
                 let hasQuestion = false
-                let hasChildQuestion = false
                 for (let i = 0; i < selected.length; i++) {
-                    if (selected[i].question === value.question)
+                    if (selected[i].question === value)
                         hasQuestion = true
-                    if (selected[i].question === value.childQuestion)
-                        hasChildQuestion = true
                 }
-                return hasQuestion && hasChildQuestion
+                return hasQuestion
             }
-            this.filteredNonTextChartsData = this.nonTextChartsData.filter(x => selectedHas(x))
+
+            let result = []
+            for (let i = 0; i < this.nonTextChartsData.length; i++) {
+                let subResult = []
+                for (let j = 0; j < this.nonTextChartsData[i].length; j++) {
+                    let filter = this.nonTextChartsData[i][j].filter(x => selectedHas(x.childQuestion))
+                    if (filter.length > 0)
+                        subResult.push(filter)
+                }
+                if (subResult.length > 0)
+                    result.push(result)
+            }
+
+            this.filteredNonTextChartsData = result
         }
     },
     computed: {
@@ -175,8 +201,11 @@ export default {
                 model: false,
             },
             filterValues: undefined,
-            nonTextChartsData: [],
+
             filteredNonTextChartsData: [],
+            nonTextTableData: [],
+            nonTextChartsData: [],
+
             textChartsData: [],
         }
     },
@@ -187,7 +216,7 @@ export default {
             if (this.activeTab === 0)
                 canvasPromises = this.$refs.nonTextChartsData.map(chart => chart.getImg(3));
             else
-                canvasPromises = this.$refs.textextChartsData.map(chart => chart.getImg(3));
+                canvasPromises = this.$refs.textChartsData.map(chart => chart.getImg(3));
 
             await Promise.all(canvasPromises).then(canvases => {
                 let pres = new PptxGenJS()
@@ -225,7 +254,6 @@ export default {
                 if (this.results[j].answers[index].tonality !== null) {
                     let tonality = this.results[j].answers[index].tonality ? 'Позитивная' : 'Негативная'
                     result.push({answer: this.results[j].answers[index].answer, tonality: tonality})
-
                 }
             }
             return result
@@ -304,8 +332,43 @@ export default {
                     this.nonTextChartsData.push(chartData)
                 })
             }
-            this.nonTextChartsData = this.nonTextChartsData.sort((it, other) => it.total - other.total)
+            this.nonTextChartsData = this.groupBy(this.nonTextChartsData, 'question')
+
+            for (let i = 0; i < this.nonTextChartsData.length; i++){
+                this.nonTextChartsData[i] = this.groupBy(this.nonTextChartsData[i], 'childQuestion')
+                for (let j = 0; j < this.nonTextChartsData[i].length; j++) {
+                    this.nonTextChartsData[i][j].sort((it, other) => other.total - it.total)
+                }
+            }
+
             this.filteredNonTextChartsData = this.nonTextChartsData
+        },
+        groupBy(array, key) {
+            let keys = []
+            let result = []
+
+            let keyIndex = (y) => {
+                for (let i = 0; i < keys.length; i++) {
+                    if (keys[i] === y)
+                        return i
+                }
+                return -1
+            }
+
+            let put = (y, x) => {
+                let kI = keyIndex(y)
+                if (kI !== -1)
+                    result[kI].push(x)
+                else {
+                    result.push([x])
+                    keys.push(y)
+                }
+            }
+
+            for (let i = 0; i < array.length; i++)
+                put(array[i][key], array[i])
+
+            return result
         },
         flatData() {
             let flatted = []
@@ -348,7 +411,38 @@ export default {
 }
 </script>
 
+<style>
+.v-expansion-panel-content__wrap {
+    padding: 0 !important;
+}
+
+.v-expansion-panel-header {
+    border-top: 1px solid #E0E0E0;
+}
+</style>
+
 <style scoped>
+table {
+    margin: auto;
+    padding: 16px;
+}
+
+th {
+    border: 1px solid #E0E0E0;
+    text-align: center;
+    padding: 8px;
+}
+
+td {
+    border: 1px solid #E0E0E0;
+    text-align: center;
+    padding: 8px;
+}
+
+.selected-panel {
+    color: red;
+}
+
 .selected-tab {
     font-weight: bolder;
     font-size: large;

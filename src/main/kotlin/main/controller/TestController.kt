@@ -1,4 +1,4 @@
-package main.controllers
+package main.controller
 
 import com.fasterxml.jackson.annotation.JsonView
 import main.model.User

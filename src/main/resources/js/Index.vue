@@ -268,10 +268,10 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #A5A5A5;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #add8e6;
+    background: #5B5B5B;
 }
 </style>
